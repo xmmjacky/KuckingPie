@@ -1,0 +1,428 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title>{config.webname}</title>
+    <meta content="{config.webkeyword}" name="keywords">
+    <meta content="{config.webdescription}" name="description">
+    <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="{config.templateskin}/js/jquery-ui.min.js" type="text/javascript"></script>
+    <link media="screen" type="text/css" href="{config.templateskin}/css/jquery-ui.min.css" rel="stylesheet">
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript">
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '{config.mp_slave_appid}', // 必填，公众号的唯一标识
+            timestamp: {jstimestamp}, // 必填，生成签名的时间戳
+                    nonceStr: '{jsnoncestr}', // 必填，生成签名的随机串
+                    signature: '{mp_signature}',// 必填，签名，见附录1
+            jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+        wx.ready(function(){
+            <%if modelCompay!=null%>
+            var wxShareTitle = '分享VIP码';
+            var wxShareDesc = '每扫码增加一位,余额增加2元';
+            var wxShareImage = 'http://4008317417.cn/company_qr/{modelCompay.Id}.jpg';
+            var wxShareUrl = 'http://4008317417.cn/mp_show_company.aspx?companyid={modelCompay.Id}';
+            wx.onMenuShareTimeline({
+                title: wxShareTitle, // 分享标题
+                link: wxShareUrl, // 分享链接
+                imgUrl: wxShareImage, // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+            wx.onMenuShareAppMessage({
+                title: wxShareTitle, // 分享标题
+                desc: wxShareDesc, // 分享描述
+                link: wxShareUrl, // 分享链接
+                imgUrl: wxShareImage, // 分享图标
+                type: 'link', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+            wx.onMenuShareQQ({
+                title: wxShareTitle, // 分享标题
+                desc: wxShareDesc, // 分享描述
+                link: wxShareUrl, // 分享链接
+                imgUrl: wxShareImage, // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+            wx.onMenuShareWeibo({
+                title: wxShareTitle, // 分享标题
+                desc: wxShareDesc, // 分享描述
+                link: wxShareUrl, // 分享链接
+                imgUrl: wxShareImage, // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+            wx.onMenuShareQZone({
+                title: wxShareTitle, // 分享标题
+                desc: wxShareDesc, // 分享描述
+                link: wxShareUrl, // 分享链接
+                imgUrl: wxShareImage, // 分享图标
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+            <%/if%>
+        });
+        wx.error(function(res){
+            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，
+            //也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+
+        });
+
+        
+    </script>
+
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "微软雅黑",STXiHei;
+        }
+
+        body {
+            background-color: rgb(65,35,17);
+        }
+
+        .content {
+            width: 350px;
+            margin: 50px auto 0px;
+            position: relative;
+            text-align: center;
+        }
+
+            .content .welcome {
+                width: 125px;
+                position: absolute;
+                right: -9px;
+                top: -37px;
+                display: inline-block;
+            }
+
+            .content .cont {
+                position: absolute;
+                top: 0px;
+                padding-top: 60px;
+                font-size: 18px;
+            }
+                .content .cont.show {
+                    padding-top: 20px;padding-left: 5px;
+                }
+
+
+                .content .cont .red {
+                    background-color: rgb(232,56,41);
+                    color: white;
+                    font-size: 13px;
+                    border-radius: 5px;
+                    padding: 3px;
+                    width: 110px;
+                    text-align: center;
+                    margin: 0px 3px;
+                }
+
+                .content .cont .purple {
+                    background-color: rgb(96,25,134);
+                    color: white;
+                    font-size: 13px;
+                    border-radius: 5px;
+                    padding: 3px;
+                    width: 110px;
+                    text-align: center;
+                    margin: 0px 3px;
+                }
+
+                .content .cont td {
+                    text-align: left;
+                }
+
+                .content .cont .txt {
+                    color: rgb(70,40,23);
+                }
+
+                .content .cont th {
+                    width: 30%;
+                    text-align: right;
+                }
+
+                .content .cont input {
+                    background-color: rgb(201,160,99);
+                    border: 0px;
+                    height: 26px;
+                    width: 90%;
+                    color: white;
+                    border-radius: 5px;
+                    font-size: 16px;
+                }
+
+                    .content .cont input::-webkit-input-placeholder {
+                        color: rgb(183,136,76);
+                    }
+
+                    .content .cont input:-moz-placeholder {
+                        color: rgb(183,136,76);
+                    }
+
+                    .content .cont input::-moz-placeholder {
+                        color: rgb(183,136,76);
+                    }
+
+                    .content .cont input:-ms-input-placeholder {
+                        color: rgb(183,136,76);
+                    }
+
+            .content .submit {
+                width: 90%;
+                height: 30px;
+                line-height: 30px;
+                background-color: rgb(230,0,19);
+                color: white;
+                border-radius: 10px;
+                font-size: 16px;
+                margin-top: 12px;
+                border: 0px;
+                display: inline-block;
+                text-decoration: none;
+                text-align: center;
+            }
+
+            .content .yellow {
+                color: rgb(255,241,0);
+            }
+
+            .content .red {
+                color: rgb(230,0,19);
+            }
+            .content .cont img{
+                width:100px;
+            }
+            .content .cont .person_info{
+                background-image: url(/templates/green/joincompany/join_company_5.png);
+                width: 110px;
+                height: 110px;
+                background-size: 110px;
+                padding-left: 15px;
+                box-sizing: border-box;
+                padding-top: 16px;
+            }
+
+        @media screen and (max-width: 320px) {
+            .content {
+                width: 300px;
+            }
+            .content .cont.show {
+                    padding-top: 5px;padding-left: 5px;
+                }
+            .content .cont img{
+                width:80px;
+            }
+                .content .welcome {
+                    width: 110px;
+                }
+
+                .content .cont {
+                    padding-top: 40px;
+                    font-size: 16px;
+                }
+                .content .cont .red{
+                    width: 100px;
+                    margin: 0px;
+                }
+                .content .cont .purple{
+                    width: 100px;
+                    margin: 0px;
+                }
+                .content .submit{
+                    width: 300px;
+                    font-size: 14px;
+                }
+                .content .cont .person_info{
+                    width: 95px;
+                    height: 95px;
+                    background-size: 95px;
+                    padding-left: 12px;
+                    box-sizing: border-box;
+                    padding-top: 4px;
+                }
+        }
+    </style>
+    <script type="text/javascript">
+        var isInArea = 1;
+        var areaId = 0;
+        $(function () {
+            $('#btnSubmit').on('click', function () {
+                if ($('#txtCompanyName').val().length == 0) { alert('请输入公司'); return false; }
+                if ($('#txtCompanyAddress').val().length == 0) { alert('请输入地址'); return false; }
+                if (isInArea == 0) {
+                    alert('抱歉!为保证口感，仅支持600米内的企业。');
+                    return false;
+                }
+                var obj=$(this);
+                var buttonText = $(obj).text();
+                $.ajax({
+                    type: "post",
+                    url: "/tools/submit_ajax.ashx?action=join_company",
+                    data: {
+                        txtCompanyName: $('#txtCompanyName').val(),
+                        txtCompanyAddress: $('#txtCompanyAddress').val(),
+                        openid: $('#hfOpenId').val(),
+                        areaid: areaId
+                    },
+                    dataType: "json",
+                    beforeSend: function(XMLHttpRequest) {
+                        //发送前动作
+                        $(obj).prop("disabled",true).text("请稍候...");
+                    },
+                    success: function (data, textStatus) {
+                        if (data.status == 1) {
+                            alert('加入成功');
+                            location.reload();
+                        } else {
+                            if (data.msg) {
+                                alert(data.msg);
+                            } else {
+                                alert('申请失败,请您直接通过微信发给消息客服人员');
+                            }
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("状态：" + textStatus + "；出错提示：" + errorThrown);
+                    },
+                    complete: function (XMLHttpRequest, textStatus) {
+                        $(obj).prop("disabled",false).text(buttonText);
+                    },
+                    timeout: 20000
+                });
+            });
+            
+        });
+    </script>
+    
+</head>
+<body>
+    <%if userModel.company_id==0%>
+    <%if modelRegisterCompany==null%>
+    <div class="content">
+        <img src="/templates/green/joincompany/join_company_1.png" style="width:100%;height:100%;position:relative;" />
+        <img class="welcome" src="/templates/green/joincompany/join_company_2.png" style="display:none;" />
+        <div class="cont">
+            <table>
+                <tr>
+                    <th><span class="txt">公司</span></th>
+                    <td><input type="text" id="txtCompanyName" /></td>
+                </tr>
+                <tr>
+                    <th><span class="txt">地址</span></th>
+                    <td><input type="text" placeholder="请正确填写，否则无法并入公司" id="txtCompanyAddress" /></td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <a href="javascript:void(0)" class="submit" id="btnSubmit">加入VIP</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+    <%else%>
+    <div class="content">
+        <img src="/templates/green/joincompany/join_company_1.png" style="width:100%;height:100%;position:relative;" />
+        <img class="welcome" src="/templates/green/joincompany/join_company_7.png" style="right: 105px;top: 47px;" />
+    </div>
+    <%/if%>
+    <%else%>
+    <div class="content">
+        <img src="/templates/green/joincompany/join_company_1.png" style="width:100%;height:100%;position:relative;" />
+        <div class="cont show" >
+            <table>
+                <tr>
+                    <td colspan="3" style="color: rgb(72,24,42);font-size: 16px;padding-left: 55px;font-weight: bold;">
+                        {modelCompay.CompanyName}VIP卡
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="4">
+                        <img src="/company_qr/qr_{modelCompay.Id}.jpg"/>
+                    </td>
+                    <td><div class="red"><span>满29减2元/</span><span>堂吃</span></div></td>
+                    <td rowspan="4">
+                        <div  class="person_info">
+                            <table>
+                                <tr>
+                                    <td rowspan="2" style="width: 38px;color: rgba(0,161,233,1);font-size: 27px;text-align: center;">{modelCompay.PersonCount}</td>
+                                    <td style="font-size: 12px;color: rgba(0,161,233,1);">位</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(0,161,233,1);">同事</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="2" style="width: 38px;color: rgba(234,85,22,1);font-size: 27px;text-align: center;">{totalAmount}</td>
+                                    <td style="font-size: 12px;color: rgba(234,85,22,1);">余额</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(234,85,22,1);">元</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="red"><span>堂吃抵扣现磨饮料</span></div></td>
+
+                </tr>
+                <tr>
+                    <td><div class="purple"><span>满99减5元/</span><span>外卖</span></div></td>
+                </tr>
+                <tr>
+                    <td><div class="purple"><span>免外送费</span></div></td>
+                </tr>
+
+            </table>
+        </div>
+        <a href="javascript:void(0)" class="submit" id="btnShare" style="width: 350px;">分享上图VIP码,每扫码增加一位,余额增加2元</a>
+    </div>
+    <%/if%>
+    <div class="content" style="margin-top: 5%;">
+        <div>
+            <span class="yellow" style="font-size:26px;"></span>
+            <span class="yellow" style="font-size:26px;">余额从哪里来？</span>
+        </div>
+        <p class="red" style="font-size:23px;">
+              1.分享公司群，余额蹭蹭涨<br />
+            2.多用微信下单，系统自动赠余额<br />
+            </span>
+        </p>
+    </div>
+    <img src="/templates/green/joincompany/join_company_8.png" style="width:50%;margin: 0px auto;display: block;" />
+    <input type="hidden" id="hfOpenId" value="{openid}" />
+    <%template src=/_cnzz.html/%>
+</body>
+</html>

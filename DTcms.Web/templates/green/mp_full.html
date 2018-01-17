@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title>{config.webname}</title>
+    <meta content="{config.webkeyword}" name="keywords">
+    <meta content="{config.webdescription}" name="description">    
+    <link media="screen" type="text/css" href="{config.templateskin}/css/mp.css?ver=8" rel="stylesheet">    
+    <%template src=/_mp_share.html/%>
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body>    
+    <%if carnivalDetail!=null%>
+    <!--满送活动 Begin-->
+    <div class="carnival" id="divCarnivalOnline">
+        <div class="main">
+            <span class="num"><%write (carnivalUserModel!=null?carnivalUserModel.Num:0)%></span>
+            <span class="white">您当前累计订单次数</span>
+            <span class="date white">本次活动截止：<%write carnivalModel.EndTime.ToString("yyyy年MM月dd日")%></span>
+            <ul style="overflow: hidden; margin: 10px auto 40px auto; width: 237px; ">
+                <%loop dr carnivalDetail%>
+                <li>                    
+                    <div class="item one selected" data-id="{dr[id]}" data-title="满{dr[change_nums]}次送{dr[title]}" data-change="{dr[change_nums]}" style="background: url({dr[mp_img_url]});">
+                        <div class="unselect cover">
+                            <span style="color: rgb(255,241,0); margin-top: 25px; border: 1px solid rgb(255,241,0); width: 60px; margin-left: 7px; transform: rotate(-19deg); -ms-transform: rotate(-19deg); -moz-transform: rotate(-19deg); -webkit-transform: rotate(-19deg); -o-transform: rotate(-19deg);">需{dr[change_nums]}次</span>
+                        </div>
+                        <div class="name">
+                            {dr[title]}                            
+                        </div>
+                    </div>
+                </li>
+                <%/loop%>                
+            </ul>
+            <span class="btn active" onclick="wx.closeWindow();">关闭</span>
+            <span class="notice">*当天多次订餐累计为1次 <br />*请在满足条件后自主兑换下单,逾期则自动清零<br />{config.webname}拥有活动最终解释权</span>
+        </div>
+    </div>
+    <!--满送活动 End-->    
+    <%/if%>    
+    <%template src=/_cnzz.html/%>
+</body>
+</html>

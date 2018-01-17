@@ -1,0 +1,126 @@
+@charset "gbk";
+html,body{
+    padding: 0;
+    margin: 0;
+    font-size:0.95em;
+    font-family:"Î¢ÈíÑÅºÚ","ËÎÌå",Arial;
+    height:100%;
+}
+ul,form,dl,dt,dd,li,ol{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+article,header,footer,nav{display:block;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.clearfix{display:inline-table}
+*html .clearfix{height:1%}
+.clearfix{display:block}
+*+html .clearfix{min-height:1%}
+.clear{
+    display: block;
+    clear: both;
+    overflow: auto;
+    _overflow:hidden;
+}
+.mainWrap{
+    max-width: 1024px;
+    margin: 0 auto;
+    overflow:hidden;
+    
+}
+footer{
+    min-height:147px;
+    
+    color:#fff;
+    background:url(../img/logo_small.jpg) center center no-repeat #000;
+    background-position-y: 15px;
+}
+header{
+    display: block;
+    background: url(../img/top_bg.png) repeat-x;
+    min-height: 142px;
+}
+header .logo{
+    height: 142px;
+    width: 520px;
+    float: left;
+    background: url(../img/logo.png) left top no-repeat;
+}
+header .tele{
+    float: right;
+    width: 113px;
+    height: 116px;
+    background: url(../img/tele.png) left bottom no-repeat;
+}
+.menu{
+    display:block;
+    overflow:hidden;
+	margin-left: 1px;
+    width: 100%;
+}
+.menu li{
+    float: left;
+    
+    height: 60px;
+    width: 14.28%;
+    background-image: url(../img/menu.jpg);
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+
+}
+.menu li a{
+    display:block;
+    height:60px;
+    padding-left:149px;
+}
+.menu .m2{
+    background-position: -149px 0;
+}
+.menu .m3{
+    background-position: -298px 0;
+}
+.menu .m4{
+    background-position: -447px 0;
+}
+.menu .m5{
+    background-position: -596px 0;
+}
+.menu .m6{
+    background-position: -745px 0;
+}
+.menu .m7{
+    background-position: -894px 0;
+}
+.menu li:hover{
+    background-position-y: -73px;
+}
+.menu .hover{
+    background-position-y: -73px;
+}
+#color_strip{
+    height:12px;
+    margin-left:1px;
+}
+#color_strip.m1{
+    background:#d28300;
+}
+#color_strip.m2{
+    background:#ca480d;
+}
+#color_strip.m3{
+    background:#ba0045;
+}
+#color_strip.m4{
+    background:#0094bd;
+}
+#color_strip.m5{
+    background:#d28300;
+}
+#color_strip.m6{
+    background:#9f337e;
+}
+#color_strip.m7{
+    background:#ca480d;
+}

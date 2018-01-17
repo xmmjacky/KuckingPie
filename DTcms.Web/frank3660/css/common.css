@@ -1,0 +1,186 @@
+@charset "gbk";
+html{box-sizing:border-box;overflow:hidden;position:relative}
+html,body{
+    padding: 0;
+    margin: 0;
+    font-size:0.95em;
+    font-family:"Î¢ÈíÑÅºÚ","ËÎÌå",Arial;
+    height:100%;
+}
+ul,form,dl,dt,dd,li,ol{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+article,header,footer,nav{display:block;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.clearfix{display:inline-table}
+*html .clearfix{height:1%}
+.clearfix{display:block}
+*+html .clearfix{min-height:1%}
+.clear{
+    display: block;
+    clear: both;
+    overflow: auto;
+    _overflow:hidden;
+}
+.mainWrap{
+    width: 1042px;
+    margin: 0 auto;
+    overflow:hidden;
+}
+
+.main_table .notify{
+    display:inline-block;
+    position:relative;
+    padding-right:14px;
+    background:url(../img/red_point.png) right top no-repeat;
+}
+.main_table .notify .notify_window{
+    position:absolute;
+    min-width:150px;
+    
+}
+.main_table .notify .notify_arrow{
+    background:url(../img/au_gray.png) no-repeat;
+    height:10px;
+    width:30px;
+}
+.main_table .notify .notify_box{
+    background-color:#efefef;
+    padding:1px 4px;
+}
+.main_table .notify .notify_box .btn_add{
+    background:#e6000f;
+    border-radius:8px;
+    border:0;
+    color:#fff;
+    margin-bottom:4px;
+}
+.main_table .notify .notify_box .notify_text{text-align:left;font-size:0.8em;cursor:pointer}
+.main_table .switch {
+            background: url(../img/switch_off.png) no-repeat;
+            height: 26px;
+            width: 51px;
+            display: inline-block;
+            vertical-align: top;
+        }
+.main_table .switch.on {
+            background: url(../img/switch_on.png) no-repeat;
+        }
+.main_table .btn_confirm{
+    border-top:1px solid #ed7a41;
+    border-bottom:1px solid #f37f88;
+    border-left:1px solid #ee7145;
+    border-right:1px solid #ee7145;
+    color:#fff;
+    cursor:pointer;
+    background: linear-gradient(to bottom right, #e94c05, #e40114);
+    background: -moz-linear-gradient(left top, #e94c05, #e40114);
+    background: -ms-linear-gradient(top left, #e94c05, #e40114);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e94c05', endColorstr='#e40114'); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#e94c05', endColorstr='#e40114')"; /* IE8 */
+    
+    padding:4px 8px;
+
+}
+    .main_table .condition {
+        text-indent: 0.2em;
+        font-size: 1em;
+        color: #00a1e9;
+    }
+        .main_table .condition .gray, .places .gray {
+            color: #929292;
+        }
+        .main_table .condition span {
+            display: inline-block;
+            padding: 2px 4px;
+        }
+                    .main_table{
+            border-spacing:0;
+            table-layout:fixed;
+            border-collapse:collapse;
+            width:100%;
+            margin-top:10px;
+        }
+            .main_table thead th {
+                position:relative;
+                color: #fff;
+                background: #8fc320;
+                padding: 4px 0;
+                border-left: 1px solid #b1d261;
+                border-right: 1px solid #b1d261;
+            }
+            .main_table thead .icon_expand
+            {
+                background:url(../img/ad_green.png) no-repeat;
+                position:absolute;
+                width:14px;
+                height:14px;
+                right:7px;
+                top:7px;
+            }
+            .main_table .check_head {
+                display: inline-block;
+                border-radius: 6px;
+                background: #fea600;
+                padding: 0 4px;
+            }
+            .main_table td{
+                text-align:center;
+                border:1px solid #e1e1e1;
+            }
+            .main_table .aln_left {
+                text-align: left;
+                padding-left:4px;
+            }
+            .main_table .aln_right {
+                text-align: right;
+                padding-right:4px;
+            }
+            .main_table .select{
+                cursor:pointer;
+                display:inline-block;
+                padding-right:22px;
+                background:url(../img/ad_orange.png) right center no-repeat;
+            }
+
+.pop_container{position:absolute}
+.pop_container .pop_table {
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+.pop_container .pop_table td{
+    border:1px solid #c4c4c4;
+}
+.pop_container .pop_table caption{
+    background:#8fc320;
+    color:#fff;
+
+}
+
+.pop_container .pop_table .btn_confirm{
+    border-top:1px solid #ed7a41;
+    border-bottom:1px solid #f37f88;
+    border-left:1px solid #ee7145;
+    border-right:1px solid #ee7145;
+    color:#fff;
+    cursor:pointer;
+    background: linear-gradient(to bottom right, #e94c05, #e40114);
+    background: -moz-linear-gradient(left top, #e94c05, #e40114);
+    background: -ms-linear-gradient(top left, #e94c05, #e40114);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e94c05', endColorstr='#e40114'); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#e94c05', endColorstr='#e40114')"; /* IE8 */
+    
+    padding:4px 8px;
+}
+
+/*94c41a*/
+
+.pop_container .pop_table .btn_cancle{
+    background-color:#94c41a;
+    border:1px solid #e0f0c9;
+    color:#fff;
+    cursor:pointer;
+    padding:4px 8px;
+}

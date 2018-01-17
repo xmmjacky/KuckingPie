@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77CF8A3A-1126-4916-8589-83CC1193B5F9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TeeGonSdk</RootNamespace>
+    <AssemblyName>TeeGonSdk</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\DTcms.Web\Rel\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseTopRequest.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DefaultTopClient.cs" />
+    <Compile Include="Domain\AccountAmountResult.cs" />
+    <Compile Include="Domain\AccountGetResult.cs" />
+    <Compile Include="Domain\AccountJournal.cs" />
+    <Compile Include="Domain\AccountJournalListResult.cs" />
+    <Compile Include="Domain\AccountStatusResult.cs" />
+    <Compile Include="Domain\Charge.cs" />
+    <Compile Include="Domain\ChargeAction.cs" />
+    <Compile Include="Domain\ChargeActionParams2.cs" />
+    <None Include="Domain\ChargeActionParams2.cs.bak1" />
+    <Compile Include="Domain\ChargeGetResult.cs" />
+    <Compile Include="Domain\ChargeListResult.cs" />
+    <Compile Include="Domain\ChargePayStatusResult.cs" />
+    <Compile Include="Domain\ChargeResult.cs" />
+    <Compile Include="Domain\TeeGonNotifyItemResponse.cs" />
+    <Compile Include="Domain\TeeGonNotifyRequest.cs" />
+    <Compile Include="Domain\Withdrawal.cs" />
+    <Compile Include="Domain\WithdrawalListResult.cs" />
+    <Compile Include="ITopClient.cs" />
+    <Compile Include="ITopLogger.cs" />
+    <Compile Include="ITopRequest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Request\AccountAmountRequest.cs" />
+    <Compile Include="Request\AccountGetRequest.cs" />
+    <Compile Include="Request\AccountJournalListRequest.cs" />
+    <Compile Include="Request\AccountStatusRequest.cs" />
+    <Compile Include="Request\BankUrlBindRequest.cs" />
+    <Compile Include="Request\ChargeGetRequest.cs" />
+    <Compile Include="Request\ChargeListRequest.cs" />
+    <Compile Include="Request\ChargePayStatusRequest.cs" />
+    <Compile Include="Request\ChargeRequest.cs" />
+    <Compile Include="Request\WithdrawalConfirmRequest.cs" />
+    <Compile Include="Request\WithdrawalCreateRequest.cs" />
+    <Compile Include="Request\WithdrawalListRequest.cs" />
+    <Compile Include="Response\AccountAmountResponse.cs" />
+    <Compile Include="Response\AccountGetResponse.cs" />
+    <Compile Include="Response\AccountJournalListResponse.cs" />
+    <Compile Include="Response\AccountStatusResponse.cs" />
+    <Compile Include="Response\BankUrlBindResponse.cs" />
+    <Compile Include="Response\ChargeGetResponse.cs" />
+    <Compile Include="Response\ChargeListResponse.cs" />
+    <Compile Include="Response\ChargePayStatusResponse.cs" />
+    <Compile Include="Response\ChargeResponse.cs" />
+    <Compile Include="Response\WithdrawalConfirmResponse.cs" />
+    <Compile Include="Response\WithdrawalCreateResponse.cs" />
+    <Compile Include="Response\WithdrawalListResponse.cs" />
+    <Compile Include="TopDictionary.cs" />
+    <Compile Include="TopException.cs" />
+    <Compile Include="TopObject.cs" />
+    <Compile Include="TopResponse.cs" />
+    <Compile Include="Util\RequestValidator.cs" />
+    <Compile Include="Util\SpiUtils.cs" />
+    <Compile Include="Util\StringUtil.cs" />
+    <Compile Include="Util\TopUtils.cs" />
+    <Compile Include="Util\WebUtils.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title>{config.webname}</title>
+    <meta content="{config.webkeyword}" name="keywords">
+    <meta content="{config.webdescription}" name="description">    
+    <link media="screen" type="text/css" href="{config.templateskin}/css/mp.css?ver=8" rel="stylesheet">    
+</head>
+<body>        
+    <%if carnivalOffline!=null&&carnivalOffline.Count>0%>
+    <!--堂吃优惠活动 Begin-->
+    <div class="carnival"  id="divCarnivalOffline">
+        <div class="main">
+            <%loop (BookingFood.Model.bf_carnival) modelt carnivalOffline%>            
+            <span class="date white" style="margin-top: 10px;">本次活动截止：<%write modelt.EndTime.ToString("yyyy年MM月dd日")%></span>
+            <ul style="overflow: hidden; margin: 10px auto 40px auto; width: 237px;">
+                <%set (DataTable){carnivalOfflineDetail}=get_goods_list(3,modelt.BusinessId,0,"")%>
+                <%loop dr carnivalOfflineDetail%>
+                <li>                    
+                    <div class="item one selected" data-id="{dr[id]}" data-price="{dr[sell_price]}" data-title="{dr[title]}" data- style="background: url({dr[mp_img_url]});">
+                        <div class="unselect cover"></div>
+                        <span style="background: rgb(243,152,0); position: absolute; right: 0px; width: 20px; height: 20px; border-radius: 50%; color: white; font-size: 14px;"><%write dr["sell_price"].ToString().Replace(".00","")%></span>
+                        <div class="name">
+                            {dr[title]}                            
+                        </div>
+                    </div>
+                </li>
+                <%/loop%>                
+            </ul>
+            <%/loop%>
+            <span class="btn active" id="btnCarnivalOfflineClose">关闭</span>
+        </div>
+    </div>
+    <!--堂吃优惠活动 End-->
+    <%/if%>
+    <%template src=/_cnzz.html/%>
+</body>
+</html>

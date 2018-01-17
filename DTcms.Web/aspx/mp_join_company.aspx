@@ -1,0 +1,100 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="DTcms.Web.UI.Page.mp_join_company" ValidateRequest="false" %>
+<%@ Import namespace="System.Collections.Generic" %>
+<%@ Import namespace="System.Text" %>
+<%@ Import namespace="System.Data" %>
+<%@ Import namespace="DTcms.Common" %>
+
+<script runat="server">
+override protected void OnInit(EventArgs e)
+{
+
+	/* 
+		This page was created by DTcms Template Engine at 2017/8/27 2:49:51.
+		本页面代码由DTcms模板引擎生成于 2017/8/27 2:49:51. 
+	*/
+
+	base.OnInit(e);
+	StringBuilder templateBuilder = new StringBuilder(220000);
+
+	templateBuilder.Append("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;\">\r\n    <title>");
+	templateBuilder.Append(Utils.ObjectToStr(config.webname));
+	templateBuilder.Append("</title>\r\n    <meta content=\"");
+	templateBuilder.Append(Utils.ObjectToStr(config.webkeyword));
+	templateBuilder.Append("\" name=\"keywords\">\r\n    <meta content=\"");
+	templateBuilder.Append(Utils.ObjectToStr(config.webdescription));
+	templateBuilder.Append("\" name=\"description\">\r\n    <script src=\"");
+	templateBuilder.Append(Utils.ObjectToStr(config.templateskin));
+	templateBuilder.Append("/js/jquery-1.10.2.min.js\" type=\"text/javascript\"></");
+	templateBuilder.Append("script>\r\n    <script src=\"");
+	templateBuilder.Append(Utils.ObjectToStr(config.templateskin));
+	templateBuilder.Append("/js/jquery-ui.min.js\" type=\"text/javascript\"></");
+	templateBuilder.Append("script>\r\n    <link media=\"screen\" type=\"text/css\" href=\"");
+	templateBuilder.Append(Utils.ObjectToStr(config.templateskin));
+	templateBuilder.Append("/css/jquery-ui.min.css\" rel=\"stylesheet\">\r\n    <script charset=\"utf-8\" src=\"http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z\"></");
+	templateBuilder.Append("script>\r\n    <script type=\"text/javascript\" src=\"http://res.wx.qq.com/open/js/jweixin-1.0.0.js\"></");
+	templateBuilder.Append("script>\r\n    <script type=\"text/javascript\">\r\n        wx.config({\r\n            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。\r\n            appId: '");
+	templateBuilder.Append(Utils.ObjectToStr(config.mp_slave_appid));
+	templateBuilder.Append("', // 必填，公众号的唯一标识\r\n            timestamp: ");
+	templateBuilder.Append(Utils.ObjectToStr(jstimestamp));
+	templateBuilder.Append(", // 必填，生成签名的时间戳\r\n                    nonceStr: '");
+	templateBuilder.Append(Utils.ObjectToStr(jsnoncestr));
+	templateBuilder.Append("', // 必填，生成签名的随机串\r\n                    signature: '");
+	templateBuilder.Append(Utils.ObjectToStr(mp_signature));
+	templateBuilder.Append("',// 必填，签名，见附录1\r\n            jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2\r\n        });\r\n        wx.ready(function(){\r\n            ");
+	if (modelCompay!=null)
+	{
+
+	templateBuilder.Append("\r\n            var wxShareTitle = '分享VIP码';\r\n            var wxShareDesc = '每扫码增加一位,余额增加2元';\r\n            var wxShareImage = 'http://4008317417.cn/company_qr/");
+	templateBuilder.Append(Utils.ObjectToStr(modelCompay.Id));
+	templateBuilder.Append(".jpg';\r\n            var wxShareUrl = 'http://4008317417.cn/mp_show_company.aspx?companyid=");
+	templateBuilder.Append(Utils.ObjectToStr(modelCompay.Id));
+	templateBuilder.Append("';\r\n            wx.onMenuShareTimeline({\r\n                title: wxShareTitle, // 分享标题\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareAppMessage({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                type: 'link', // 分享类型,music、video或link，不填默认为link\r\n                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareQQ({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareWeibo({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareQZone({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            ");
+	}	//end if
+
+
+	templateBuilder.Append("\r\n        });\r\n        wx.error(function(res){\r\n            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，\r\n            //也可以在返回的res参数中查看，对于SPA可以在这里更新签名。\r\n\r\n        });\r\n\r\n        \r\n    </");
+	templateBuilder.Append("script>\r\n\r\n    <style>\r\n        html, body {\r\n            height: 100%;\r\n            width: 100%;\r\n            margin: 0;\r\n            padding: 0;\r\n            font-family: \"微软雅黑\",STXiHei;\r\n        }\r\n\r\n        body {\r\n            background-color: rgb(65,35,17);\r\n        }\r\n\r\n        .content {\r\n            width: 350px;\r\n            margin: 50px auto 0px;\r\n            position: relative;\r\n            text-align: center;\r\n        }\r\n\r\n            .content .welcome {\r\n                width: 125px;\r\n                position: absolute;\r\n                right: -9px;\r\n                top: -37px;\r\n                display: inline-block;\r\n            }\r\n\r\n            .content .cont {\r\n                position: absolute;\r\n                top: 0px;\r\n                padding-top: 60px;\r\n                font-size: 18px;\r\n            }\r\n                .content .cont.show {\r\n                    padding-top: 20px;padding-left: 5px;\r\n                }\r\n\r\n\r\n                .content .cont .red {\r\n                    background-color: rgb(232,56,41);\r\n                    color: white;\r\n                    font-size: 13px;\r\n                    border-radius: 5px;\r\n                    padding: 3px;\r\n                    width: 110px;\r\n                    text-align: center;\r\n                    margin: 0px 3px;\r\n                }\r\n\r\n                .content .cont .purple {\r\n                    background-color: rgb(96,25,134);\r\n                    color: white;\r\n                    font-size: 13px;\r\n                    border-radius: 5px;\r\n                    padding: 3px;\r\n                    width: 110px;\r\n                    text-align: center;\r\n                    margin: 0px 3px;\r\n                }\r\n\r\n                .content .cont td {\r\n                    text-align: left;\r\n                }\r\n\r\n                .content .cont .txt {\r\n                    color: rgb(70,40,23);\r\n                }\r\n\r\n                .content .cont th {\r\n                    width: 30%;\r\n                    text-align: right;\r\n                }\r\n\r\n                .content .cont input {\r\n                    background-color: rgb(201,160,99);\r\n                    border: 0px;\r\n                    height: 26px;\r\n                    width: 90%;\r\n                    color: white;\r\n                    border-radius: 5px;\r\n                    font-size: 16px;\r\n                }\r\n\r\n                    .content .cont input::-webkit-input-placeholder {\r\n                        color: rgb(183,136,76);\r\n                    }\r\n\r\n                    .content .cont input:-moz-placeholder {\r\n                        color: rgb(183,136,76);\r\n                    }\r\n\r\n                    .content .cont input::-moz-placeholder {\r\n                        color: rgb(183,136,76);\r\n                    }\r\n\r\n                    .content .cont input:-ms-input-placeholder {\r\n                        color: rgb(183,136,76);\r\n                    }\r\n\r\n            .content .submit {\r\n                width: 90%;\r\n                height: 30px;\r\n                line-height: 30px;\r\n                background-color: rgb(230,0,19);\r\n                color: white;\r\n                border-radius: 10px;\r\n                font-size: 16px;\r\n                margin-top: 12px;\r\n                border: 0px;\r\n                display: inline-block;\r\n                text-decoration: none;\r\n                text-align: center;\r\n            }\r\n\r\n            .content .yellow {\r\n                color: rgb(255,241,0);\r\n            }\r\n\r\n            .content .red {\r\n                color: rgb(230,0,19);\r\n            }\r\n            .content .cont img{\r\n                width:100px;\r\n            }\r\n            .content .cont .person_info{\r\n                background-image: url(/templates/green/joincompany/join_company_5.png);\r\n                width: 110px;\r\n                height: 110px;\r\n                background-size: 110px;\r\n                padding-left: 15px;\r\n                box-sizing: border-box;\r\n                padding-top: 16px;\r\n            }\r\n\r\n        @media screen and (max-width: 320px) {\r\n            .content {\r\n                width: 300px;\r\n            }\r\n            .content .cont.show {\r\n                    padding-top: 5px;padding-left: 5px;\r\n                }\r\n            .content .cont img{\r\n                width:80px;\r\n            }\r\n                .content .welcome {\r\n                    width: 110px;\r\n                }\r\n\r\n                .content .cont {\r\n                    padding-top: 40px;\r\n                    font-size: 16px;\r\n                }\r\n                .content .cont .red{\r\n                    width: 100px;\r\n                    margin: 0px;\r\n                }\r\n                .content .cont .purple{\r\n                    width: 100px;\r\n                    margin: 0px;\r\n                }\r\n                .content .submit{\r\n                    width: 300px;\r\n                    font-size: 14px;\r\n                }\r\n                .content .cont .person_info{\r\n                    width: 95px;\r\n                    height: 95px;\r\n                    background-size: 95px;\r\n                    padding-left: 12px;\r\n                    box-sizing: border-box;\r\n                    padding-top: 4px;\r\n                }\r\n        }\r\n    </style>\r\n    <script type=\"text/javascript\">\r\n        var isInArea = 1;\r\n        var areaId = 0;\r\n        $(function () {\r\n            $('#btnSubmit').on('click', function () {\r\n                if ($('#txtCompanyName').val().length == 0) { alert('请输入公司'); return false; }\r\n                if ($('#txtCompanyAddress').val().length == 0) { alert('请输入地址'); return false; }\r\n                if (isInArea == 0) {\r\n                    alert('抱歉!为保证口感，仅支持600米内的企业。');\r\n                    return false;\r\n                }\r\n                var obj=$(this);\r\n                var buttonText = $(obj).text();\r\n                $.ajax({\r\n                    type: \"post\",\r\n                    url: \"/tools/submit_ajax.ashx?action=join_company\",\r\n                    data: {\r\n                        txtCompanyName: $('#txtCompanyName').val(),\r\n                        txtCompanyAddress: $('#txtCompanyAddress').val(),\r\n                        openid: $('#hfOpenId').val(),\r\n                        areaid: areaId\r\n                    },\r\n                    dataType: \"json\",\r\n                    beforeSend: function(XMLHttpRequest) {\r\n                        //发送前动作\r\n                        $(obj).prop(\"disabled\",true).text(\"请稍候...\");\r\n                    },\r\n                    success: function (data, textStatus) {\r\n                        if (data.status == 1) {\r\n                            alert('加入成功');\r\n                            location.reload();\r\n                        } else {\r\n                            if (data.msg) {\r\n                                alert(data.msg);\r\n                            } else {\r\n                                alert('申请失败,请您直接通过微信发给消息客服人员');\r\n                            }\r\n                        }\r\n                    },\r\n                    error: function (XMLHttpRequest, textStatus, errorThrown) {\r\n                        alert(\"状态：\" + textStatus + \"；出错提示：\" + errorThrown);\r\n                    },\r\n                    complete: function (XMLHttpRequest, textStatus) {\r\n                        $(obj).prop(\"disabled\",false).text(buttonText);\r\n                    },\r\n                    timeout: 20000\r\n                });\r\n            });\r\n            \r\n        });\r\n    </");
+	templateBuilder.Append("script>\r\n    \r\n</head>\r\n<body>\r\n    ");
+	if (userModel.company_id==0)
+	{
+
+	if (modelRegisterCompany==null)
+	{
+
+	templateBuilder.Append("\r\n    <div class=\"content\">\r\n        <img src=\"/templates/green/joincompany/join_company_1.png\" style=\"width:100%;height:100%;position:relative;\" />\r\n        <img class=\"welcome\" src=\"/templates/green/joincompany/join_company_2.png\" style=\"display:none;\" />\r\n        <div class=\"cont\">\r\n            <table>\r\n                <tr>\r\n                    <th><span class=\"txt\">公司</span></th>\r\n                    <td><input type=\"text\" id=\"txtCompanyName\" /></td>\r\n                </tr>\r\n                <tr>\r\n                    <th><span class=\"txt\">地址</span></th>\r\n                    <td><input type=\"text\" placeholder=\"请正确填写，否则无法并入公司\" id=\"txtCompanyAddress\" /></td>\r\n                </tr>\r\n                <tr>\r\n                    <th></th>\r\n                    <td>\r\n                        <a href=\"javascript:void(0)\" class=\"submit\" id=\"btnSubmit\">加入VIP</a>\r\n                    </td>\r\n                </tr>\r\n            </table>\r\n        </div>\r\n        \r\n    </div>\r\n    ");
+	}
+	else
+	{
+
+	templateBuilder.Append("\r\n    <div class=\"content\">\r\n        <img src=\"/templates/green/joincompany/join_company_1.png\" style=\"width:100%;height:100%;position:relative;\" />\r\n        <img class=\"welcome\" src=\"/templates/green/joincompany/join_company_7.png\" style=\"right: 105px;top: 47px;\" />\r\n    </div>\r\n    ");
+	}	//end if
+
+
+	}
+	else
+	{
+
+	templateBuilder.Append("\r\n    <div class=\"content\">\r\n        <img src=\"/templates/green/joincompany/join_company_1.png\" style=\"width:100%;height:100%;position:relative;\" />\r\n        <div class=\"cont show\" >\r\n            <table>\r\n                <tr>\r\n                    <td colspan=\"3\" style=\"color: rgb(72,24,42);font-size: 16px;padding-left: 55px;font-weight: bold;\">\r\n                        ");
+	templateBuilder.Append(Utils.ObjectToStr(modelCompay.CompanyName));
+	templateBuilder.Append("VIP卡\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td rowspan=\"4\">\r\n                        <img src=\"/company_qr/qr_");
+	templateBuilder.Append(Utils.ObjectToStr(modelCompay.Id));
+	templateBuilder.Append(".jpg\"/>\r\n                    </td>\r\n                    <td><div class=\"red\"><span>满29减2元/</span><span>堂吃</span></div></td>\r\n                    <td rowspan=\"4\">\r\n                        <div  class=\"person_info\">\r\n                            <table>\r\n                                <tr>\r\n                                    <td rowspan=\"2\" style=\"width: 38px;color: rgba(0,161,233,1);font-size: 27px;text-align: center;\">");
+	templateBuilder.Append(Utils.ObjectToStr(modelCompay.PersonCount));
+	templateBuilder.Append("</td>\r\n                                    <td style=\"font-size: 12px;color: rgba(0,161,233,1);\">位</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td style=\"font-size: 12px;color: rgba(0,161,233,1);\">同事</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td rowspan=\"2\" style=\"width: 38px;color: rgba(234,85,22,1);font-size: 27px;text-align: center;\">");
+	templateBuilder.Append(Utils.ObjectToStr(totalAmount));
+	templateBuilder.Append("</td>\r\n                                    <td style=\"font-size: 12px;color: rgba(234,85,22,1);\">余额</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td style=\"font-size: 12px;color: rgba(234,85,22,1);\">元</td>\r\n                                </tr>\r\n                            </table>\r\n                        </div>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td><div class=\"red\"><span>堂吃抵扣现磨饮料</span></div></td>\r\n\r\n                </tr>\r\n                <tr>\r\n                    <td><div class=\"purple\"><span>满99减5元/</span><span>外卖</span></div></td>\r\n                </tr>\r\n                <tr>\r\n                    <td><div class=\"purple\"><span>免外送费</span></div></td>\r\n                </tr>\r\n\r\n            </table>\r\n        </div>\r\n        <a href=\"javascript:void(0)\" class=\"submit\" id=\"btnShare\" style=\"width: 350px;\">分享上图VIP码,每扫码增加一位,余额增加2元</a>\r\n    </div>\r\n    ");
+	}	//end if
+
+
+	templateBuilder.Append("\r\n    <div class=\"content\" style=\"margin-top: 5%;\">\r\n        <div>\r\n            <span class=\"yellow\" style=\"font-size:26px;\"></span>\r\n            <span class=\"yellow\" style=\"font-size:26px;\">余额从哪里来？</span>\r\n        </div>\r\n        <p class=\"red\" style=\"font-size:23px;\">\r\n              1.分享公司群，余额蹭蹭涨<br />\r\n            2.多用微信下单，系统自动赠余额<br />\r\n            </span>\r\n        </p>\r\n    </div>\r\n    <img src=\"/templates/green/joincompany/join_company_8.png\" style=\"width:50%;margin: 0px auto;display: block;\" />\r\n    <input type=\"hidden\" id=\"hfOpenId\" value=\"");
+	templateBuilder.Append(Utils.ObjectToStr(openid));
+	templateBuilder.Append("\" />\r\n    ");
+
+	templateBuilder.Append("<div style=\"display:none;\">\r\n    <script type=\"text/javascript\">var cnzz_protocol = ((\"https:\" == document.location.protocol) ? \" https://\" : \" http://\");document.write(unescape(\"%3Cspan id='cnzz_stat_icon_1256906522'%3E%3C/span%3E%3Cscript src='\" + cnzz_protocol + \"s11.cnzz.com/z_stat.php%3Fid%3D1256906522%26show%3Dpic' type='text/javascript'%3E%3C/script%3E\"));</");
+	templateBuilder.Append("script>\r\n</div>");
+
+
+	templateBuilder.Append("\r\n</body>\r\n</html>\r\n");
+	Response.Write(templateBuilder.ToString());
+}
+</script>

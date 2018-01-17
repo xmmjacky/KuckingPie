@@ -1,0 +1,116 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" href="{config.templateskin}/css/common.css?ver=7" type="text/css" />    
+    <title>{config.webname}</title>    
+    <meta content="{config.webkeyword}" name="keywords">
+    <meta content="{config.webdescription}" name="description">
+    <script type="text/javascript">
+        var browser = navigator.appName
+        var b_version = navigator.appVersion
+        var version = b_version.split(";");
+        var trim_Version = version[1].replace(/[ ]/g, "");
+        if (browser == "Microsoft Internet Explorer" && trim_Version == "MSIE6.0") {
+            window.location.href = '/ie6update.html';
+        }
+    </script>
+    <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript">                
+        function ShowLocker() {            
+            $('#DivLocker').css({
+                "height": function () { return $(document).height(); },
+                "width": function () { return $(document).width(); }
+            });
+            if ($('#DivLocker').css('display') == 'none') {
+                $('#DivLocker').show();
+            } else {
+                $('#DivLocker').hide();
+            }
+        }        
+    </script>
+    <script src="{config.templateskin}/js/jquery.mailAutoComplete-3.1.js" type="text/javascript"></script>    
+    <script src="{config.templateskin}/js/jquery.cookie.js" type="text/javascript"></script>
+    <script src="{config.templateskin}/js/jquery.kinMaxShow-1.1.min.js" type="text/javascript"></script>
+    <script src="{config.templateskin}/js/jQuery.md5.js" type="text/javascript"></script>
+    <script src="{config.webpath}scripts/placeholder/placeholder.js" type="text/javascript"></script>
+    <link media="screen" type="text/css" href="{config.webpath}scripts/placeholder/placeholder.css" rel="stylesheet">
+    <link media="screen" type="text/css" href="{config.templateskin}/css/luckingpie.css?ver=7" rel="stylesheet">
+    <script type="text/javascript">
+        
+        $(function () {
+            $("#kinMaxShow").kinMaxShow({
+                height: 322,
+                intervalTime: 5
+            });
+            if ('{areabusy}' == '1') {
+                $('#divTimePopup').fadeIn();
+            }
+            if ('{arealock}' == '1') {
+                $('#divlock').fadeIn();
+            }
+            $('#email').val($.cookie('user_email'));
+            $('#phone').val($.cookie('user_phone'));
+            $('#address').val($.cookie('user_address'));
+        });
+        
+    </script>
+</head>
+<body>    
+    <header>
+        <div class="mainWrap" style="max-width:1024px;">
+            <div class="logo"></div>
+            <div class="tele"></div>
+        </div>
+        <div class="mainWrap" style="max-width:1024px;">
+            <div id="kinMaxShow" class="slide" style="display:none;">
+                <%if config.HeadPhoto1!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto1}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto2!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto2}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto3!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto3}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto4!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto4}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto5!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto5}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto6!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto6}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto7!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto7}" /></a>
+                </div>
+                <%/if%>
+                <%if config.HeadPhoto8!=""%>
+                <div>
+                    <a><img src="{config.HeadPhoto8}" /></a>
+                </div>
+                <%/if%>
+
+            </div>
+        </div>
+    </header>
+
+    <input type="hidden" id="hfAreaId" />
+    <input type="hidden" id="hfCookie" />
+    <input type="hidden" id="hfAdditional" />
+</body>
+</html>

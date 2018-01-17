@@ -1,0 +1,4 @@
+﻿.placeholder-wrap { position:relative;}
+.phholder {margin-left:2px;text-align:left;z-index:2;}
+.placeholder {display:inline-block; margin-left:0px;*margin-top:10px;}
+       .phholder,.phholder .placeholder {font-family:"微软雅黑","宋体",Arial;font-size:20px;line-height:26px;color:#aaa}

@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;">
+    <title></title>
+    <script src="{config.templateskin}/js/zepto.min.1.1.6.js" type="text/javascript"></script>    
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "微软雅黑",STXiHei;
+        }
+        .typechoice {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;            
+        }
+
+        .txt {
+            width: 96%;
+            border: 1px solid #ea5414;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 20px;
+            padding: 2%;
+            display: block;
+            background: white;
+        }
+            .txt .big {
+                font-size: 30px;
+                line-height: 45px;
+                display: block;
+            }
+        .main {
+            width: 80%;
+            text-align: center;
+            margin: 0px auto;
+            margin-top: 20px;
+        }
+        .btn {
+            color: white;
+            background: #ea5414;
+            border: 0px;
+            height: 30px;
+            width: 100px;
+            font-size: 20px;
+            border-radius: 10px;
+            line-height: 30px;
+        }
+    </style> 
+    <%template src=/_mp_share.html/%>       
+    <script type="text/javascript">
+        $(function () {            
+            $('div').css("height", $(window).height());
+        });
+    </script>
+</head>
+<body class="typechoice">
+    <%if msg==1%>
+    <div class="main">
+        <span class="txt">{msgbox}</span>
+    </div>
+    <%else%>
+    <div class="main">
+        <span class="txt">抱歉，已超出{config.additional}分钟补单时间
+            <span class="big">需再满{config.lowamount}元起送</span>
+        </span>        
+    </div>
+    <%/if%>
+    <%template src=/_cnzz.html/%>
+</body>
+</html>
