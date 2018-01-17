@@ -124,7 +124,10 @@
     <Compile Include="bf_user_address.cs" />
     <Compile Include="bf_user_voucher.cs" />
     <Compile Include="bf_worker.cs" />
+    <Compile Include="Pay\dt_user_confirm_top.cs" />
+    <Compile Include="Pay\dt_user_top_up.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
