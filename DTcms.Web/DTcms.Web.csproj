@@ -30,6 +30,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +61,9 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Rel\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Orm.Son">
+      <HintPath>..\Lib\Orm.Son.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -775,6 +779,7 @@
     </Content>
     <Content Include="tools\api.ashx" />
     <Content Include="xmlconfig\alipay_pc.config" />
+    <Content Include="tools\vip_ajax.ashx" />
     <None Include="xmlconfig\alipay.config" />
     <None Include="xmlconfig\site.config">
       <SubType>Designer</SubType>
@@ -1507,6 +1512,9 @@
     <Compile Include="tools\verify_code.ashx.cs">
       <DependentUpon>verify_code.ashx</DependentUpon>
     </Compile>
+    <Compile Include="tools\vip_ajax.ashx.cs">
+      <DependentUpon>vip_ajax.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ADO\BLL\BLL.csproj">
@@ -1560,6 +1568,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="company_qr\" />
+    <Folder Include="frank3660\vipUser\" />
     <Folder Include="scripts\datepicker_new\" />
     <Folder Include="templates\green\holiday\" />
     <Folder Include="templates\green\images\" />
