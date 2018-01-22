@@ -195,7 +195,7 @@ namespace DTcms.Web.admin.company
                                 AddTime = DateTime.Now,
                                 Amount = 2,
                                 CompanyId = modelCompany.Id,
-                                ExpireTime = DateTime.Now.AddMonths(2),
+                                ExpireTime = DateTime.Now.AddMonths(1),
                                 UserId = int.Parse(item["id"].ToString())
                             });
                             decimal totalAmount = bllUserVoucher.GetModelList("UserId=" + int.Parse(item["id"].ToString()) + " and GetDate()<ExpireTime and Status=0").Sum(s => s.Amount);
@@ -259,7 +259,7 @@ namespace DTcms.Web.admin.company
                             AddTime = DateTime.Now,
                             Amount = 2,
                             CompanyId = modelCompany.Id,
-                            ExpireTime = DateTime.Now.AddMonths(2),
+                            ExpireTime = DateTime.Now.AddMonths(1),
                             UserId = model.RequestUserId
                         });
                         bllCompanyUser.Add(new BookingFood.Model.bf_company_user_log()

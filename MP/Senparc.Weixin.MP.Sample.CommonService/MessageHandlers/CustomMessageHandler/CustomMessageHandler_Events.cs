@@ -109,7 +109,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                         AddTime = DateTime.Now,
                         Amount = 10,
                         CompanyId = modelCompany.Id,
-                        ExpireTime = DateTime.Now.AddMonths(2),
+                        ExpireTime = DateTime.Now.AddMonths(1),
                         UserId = modelUser.id
                     });
                 }
@@ -152,7 +152,8 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                         dtUser = bllUsers.GetList(0, "company_id=" + modelCompany.Id, "id asc").Tables[0];
                     }
 
-                    
+                    if (modelCompany.Id == 347) dtUser = new DataTable();
+
                     foreach (DataRow item in dtUser.Rows)
                     {
                         bllUserVoucher.Add(new BookingFood.Model.bf_user_voucher()
@@ -160,7 +161,7 @@ namespace Senparc.Weixin.MP.Sample.CommonService.CustomMessageHandler
                             AddTime = DateTime.Now,
                             Amount = 2,
                             CompanyId = modelCompany.Id,
-                            ExpireTime = DateTime.Now.AddMonths(2),
+                            ExpireTime = DateTime.Now.AddMonths(1),
                             UserId = int.Parse(item["id"].ToString())
                         });
                         //判断当日是否已经提醒

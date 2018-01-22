@@ -355,7 +355,7 @@ namespace DTcms.Web.api.payment.teegon_jsapi
                                 AddTime = DateTime.Now,
                                 Amount = 5,
                                 CompanyId = userModel.company_id,
-                                ExpireTime = DateTime.Now.AddMonths(2),
+                                ExpireTime = DateTime.Now.AddMonths(1),
                                 UserId = userModel.id
                             });
 

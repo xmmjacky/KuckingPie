@@ -22,5 +22,9 @@ namespace BookingFood.Model.Pay
         public int? IsDeleted { get; set; }
 
         public int? Stage { get; set; }
+
+        public string NickName { get; set; }
+
+        public int? UserId { get; set; }
     }
 }

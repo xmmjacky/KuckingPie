@@ -3498,12 +3498,12 @@ namespace DTcms.Web.tools
             BookingFood.BLL.bf_user_voucher bllUserVoucher = new BookingFood.BLL.bf_user_voucher();
             int avaliableCompanyAmount = (int)bllUserVoucher.GetModelList("UserId=" + userModel.id + " and GetDate()<ExpireTime and Status=0").Sum(s => s.Amount);
             decimal isVip = cartModel.voucher_total;
-            if (takeout == 0 && (cartModel.real_amount - cartModel.voucher_total) >= 59 && modelCompany != null && avaliableCompanyAmount >= (5 + cartModel.voucher_total) && siteConfig.enable_waimai_vip)
+            if (takeout == 0 && (cartModel.real_amount - cartModel.voucher_total) >= 99 && modelCompany != null && avaliableCompanyAmount >= (5 + cartModel.voucher_total) && siteConfig.enable_waimai_vip)
             {
                 cartModel.real_amount -= 5;
                 isVip += 5;
             }
-            else if (takeout > 0 && (cartModel.real_amount - cartModel.voucher_total) >= 29 && modelCompany != null && avaliableCompanyAmount >= (2 + cartModel.voucher_total))
+            else if (takeout > 0 && (cartModel.real_amount - cartModel.voucher_total) >= 39 && modelCompany != null && avaliableCompanyAmount >= (2 + cartModel.voucher_total))
             {
                 cartModel.real_amount -= 2;
                 isVip += 2;
@@ -4683,7 +4683,7 @@ namespace DTcms.Web.tools
                         AddTime = DateTime.Now,
                         Amount = 10,
                         CompanyId = model.Id,
-                        ExpireTime = DateTime.Now.AddMonths(2),
+                        ExpireTime = DateTime.Now.AddMonths(1),
                         UserId = model.RequestUserId
                     });
                 }

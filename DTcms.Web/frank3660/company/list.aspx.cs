@@ -204,7 +204,7 @@ namespace DTcms.Web.admin.company
                             AddTime = DateTime.Now,
                             Amount = 2,
                             CompanyId = modelCompany.Id,
-                            ExpireTime = DateTime.Now.AddMonths(2),
+                            ExpireTime = DateTime.Now.AddMonths(1),
                             UserId = int.Parse(item1["id"].ToString())
                         });
                         if (bllNotice.GetRecordCount("UserId=" + item1["id"].ToString() + " and (AddTime between '"

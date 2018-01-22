@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DTcms.Web</RootNamespace>
     <AssemblyName>DTcms.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <TargetFrameworkProfile />
     <SccProjectName>Svn</SccProjectName>
@@ -40,6 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +49,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LitJSON, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -205,6 +207,7 @@
     <Content Include="frank3660\users\oauth_edit.aspx" />
     <Content Include="frank3660\users\oauth_list.aspx" />
     <Content Include="frank3660\users\oauth_user_list.aspx" />
+    <Content Include="frank3660\vipUser\confirm_Charge_list.aspx" />
     <Content Include="frank3660\worker\list.aspx" />
     <Content Include="api\oauth\feixin\index.aspx" />
     <Content Include="api\oauth\feixin\result_json.aspx" />
@@ -1369,6 +1372,13 @@
     <Compile Include="frank3660\users\user_list.aspx.designer.cs">
       <DependentUpon>user_list.aspx</DependentUpon>
     </Compile>
+    <Compile Include="frank3660\vipUser\confirm_Charge_list.aspx.cs">
+      <DependentUpon>confirm_Charge_list.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frank3660\vipUser\confirm_Charge_list.aspx.designer.cs">
+      <DependentUpon>confirm_Charge_list.aspx</DependentUpon>
+    </Compile>
     <Compile Include="frank3660\worker\list.aspx.cs">
       <DependentUpon>list.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1568,7 +1578,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="company_qr\" />
-    <Folder Include="frank3660\vipUser\" />
     <Folder Include="scripts\datepicker_new\" />
     <Folder Include="templates\green\holiday\" />
     <Folder Include="templates\green\images\" />
