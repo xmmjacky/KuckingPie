@@ -10,9 +10,9 @@ using System.Web.UI.WebControls;
 
 namespace DTcms.Web.frank3660.vipUser
 {
-    public partial class confirm_Charge_list : System.Web.UI.Page
+    public partial class confirm_Charge_list : Web.UI.ManagePage
     {
-        private readonly SonConnection db;
+        private readonly SonConnection db= new SonConnection("ConnectionString");
         protected int totalCount;
         protected int page;
         protected int pageSize;
@@ -23,7 +23,7 @@ namespace DTcms.Web.frank3660.vipUser
         protected string areafilter = string.Empty;
         public confirm_Charge_list()
         {
-            db = new SonConnection();
+           
         }
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -34,7 +34,11 @@ namespace DTcms.Web.frank3660.vipUser
             type = DTRequest.GetQueryString("type");
             if (!Page.IsPostBack)
             {
-                string areaid = Session["AreaId"].ToString();
+                string areaid = "";
+                if (Session["AreaId"] != null)
+                {
+                    areaid=Session["AreaId"].ToString();
+                }
                 List<BookingFood.Model.bf_area> listArea = new BookingFood.BLL.bf_area().GetModelList(" ParentId=" + areaid);
                 foreach (var item in listArea)
                 {
@@ -42,15 +46,15 @@ namespace DTcms.Web.frank3660.vipUser
                     areafilter += string.Format("<a href=\"confirm_Charge_list.aspx?type={0}&area={1}\">{2}</a> ", this.type, item.Id.ToString(), item.Title);
                 }
                 //ChkAdminLevel("orders", DTEnums.ActionEnum.View.ToString()); //检查权限
-                RptBind("id>0" + CombSqlTxt(this.keyword, this.area), "CreateTime desc,Id desc");
+                RptBind( CombSqlTxt(this.keyword, this.area), "CreateTime desc,Id desc");
             }
         }
         #region 数据绑定=================================
         private void RptBind(string _strWhere, string _orderby)
         {
 
-            var res = db.ExecuteSql(_strWhere);
-            this.rptList.DataSource = res;
+            var res = db.ExecuteQuery(_strWhere);
+            this.rptList.DataSource = res.Tables[0];
             this.rptList.DataBind();
             if (res != null) this.totalCount = 10;
             //绑定页码
@@ -69,27 +73,27 @@ namespace DTcms.Web.frank3660.vipUser
           
             if (!string.IsNullOrEmpty(keyword))
             {
-                strTemp.Append(string.Format(" and (w2.NickName like '%{0}%')", keyword));
+                strTemp.Append(string.Format(" and (w1.NickName like '%{0}%')", keyword));
             }
            
             if (!string.IsNullOrEmpty(_area))
             {
-                strTemp.Append(string.Format(" and w2.area_id=" + _area));
+                strTemp.Append(string.Format(" and w1.AreaId=" + _area));
             }
             
             if (!string.IsNullOrEmpty(Session["AreaId"].ToString()))
             {
-                strTemp.Append(string.Format(" and w2.area_id in (SELECT ba.Id FROM bf_area ba WHERE ba.ParentId=" + Session["AreaId"].ToString() + ")"));
+                strTemp.Append(string.Format(" and w1.AreaId in (SELECT ba.Id FROM bf_area ba WHERE ba.ParentId=" + Session["AreaId"].ToString() + ")"));
             }
             if (userid > 0)
             {
-                strTemp.Append(" and user_id=" + userid.ToString() + " ");
+                strTemp.Append(" and w1.UserId=" + userid.ToString() + " ");
             }
            
             var sqlstr = string.Format(@"SELECT w2.n, w1.* FROM dt_user_Top_up w1,
 (SELECT TOP {0} row_number() OVER (ORDER BY CreateTime DESC, Id DESC) n, Id FROM dt_user_Top_up) w2 
-WHERE w1.Id = w2.Id AND w2.n > {1} AND {2} ORDER BY w2.n ASC ", this.pageSize * this.page, (this.page - 1) * this.pageSize,strTemp);
-            return strTemp.ToString();
+WHERE w1.Id = w2.Id AND w2.n > {1} {2} ORDER BY w2.n ASC ", this.pageSize * this.page, (this.page - 1) * this.pageSize,strTemp);
+            return sqlstr.ToString();
         }
         #endregion
         #region 返回用户每页数量=========================
@@ -106,5 +110,25 @@ WHERE w1.Id = w2.Id AND w2.n > {1} AND {2} ORDER BY w2.n ASC ", this.pageSize * 
             return _default_size;
         }
         #endregion
+
+        protected void rptList_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            //ChkAdminLevel("orders", DTEnums.ActionEnum.Edit.ToString()); //检查权限
+            int id = Convert.ToInt32(e.CommandArgument.ToString());
+
+        }
+        //设置分页数量
+        protected void txtPageNum_TextChanged(object sender, EventArgs e)
+        {
+            int _pagesize;
+            if (int.TryParse(txtPageNum.Text.Trim(), out _pagesize))
+            {
+                if (_pagesize > 0)
+                {
+                    Utils.WriteCookie("order_list_page_size", _pagesize.ToString(), 43200);
+                }
+            }
+            Response.Redirect("confirm_Charge_list.aspx?type=" + type);
+        }
     }
 }

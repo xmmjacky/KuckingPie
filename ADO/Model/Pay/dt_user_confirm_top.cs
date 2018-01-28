@@ -11,8 +11,6 @@ namespace BookingFood.Model.Pay
 
         public decimal Amount { get; set; }
 
-        public DateTime? CreateTime { get; set; }
-
         public string OpneId { get; set; }
 
         public int? IsDeleted { get; set; }
@@ -20,5 +18,11 @@ namespace BookingFood.Model.Pay
         public int? AreaId { get; set; }
 
         public string AreaName { get; set; }
+
+        public string NickName { get; set; }
+
+        public int UserId { get; set; }
+
+        public string AddAmount { get; set; }
     }
 }

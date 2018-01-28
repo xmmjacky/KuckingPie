@@ -11,20 +11,18 @@ namespace BookingFood.Model.Pay
 
         public string OpenId { get; set; }
 
-        public decimal? Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public int? AreaId { get; set; }
 
         public string AreaName { get; set; }
-
-        public DateTime? CreateTime { get; set; }
-
+      
         public int? IsDeleted { get; set; }
 
-        public int? Stage { get; set; }
+        public int? State { get; set; }
 
         public string NickName { get; set; }
 
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
     }
 }

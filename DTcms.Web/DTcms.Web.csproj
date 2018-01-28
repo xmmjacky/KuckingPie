@@ -64,9 +64,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Rel\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Orm.Son">
-      <HintPath>..\Lib\Orm.Son.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -1574,6 +1571,10 @@
     <ProjectReference Include="..\TeeGonSdk\TeeGonSdk.csproj">
       <Project>{77cf8a3a-1126-4916-8589-83cc1193b5f9}</Project>
       <Name>TeeGonSdk</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\xinmi\Downloads\Orm.Son-master\Orm.Son-master\Orm.Son\Orm.Son.csproj">
+      <Project>{018cf1a6-b5f9-44b2-baf8-2306729cb6a6}</Project>
+      <Name>Orm.Son</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
