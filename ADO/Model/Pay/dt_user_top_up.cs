@@ -24,5 +24,10 @@ namespace BookingFood.Model.Pay
         public string NickName { get; set; }
 
         public int UserId { get; set; }
+
+        public int Type { get; set; }
+
+        public int Paystate { get; set; }
+
     }
 }

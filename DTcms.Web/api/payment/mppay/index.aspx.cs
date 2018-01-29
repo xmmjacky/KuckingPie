@@ -16,10 +16,10 @@ namespace DTcms.Web.api.payment.mppay
         protected string nonceStr = "";
         protected string package = "";
         protected string paySign = "";
-
+        
         protected string jsnoncestr = string.Empty;
         protected string jstimestamp = string.Empty;
-        protected decimal order_amount = 0;
+        protected decimal order_amount = 0.1M;
         protected string openid = string.Empty;
         protected string order_no = string.Empty;
         //读取站点配置信息
@@ -33,7 +33,7 @@ namespace DTcms.Web.api.payment.mppay
             
             //获得订单信息
             order_no = DTRequest.GetQueryString("pay_order_no"); //订单号
-            order_amount = DTRequest.GetQueryDecimal("pay_order_amount", 0); //订单金额
+            order_amount = DTRequest.GetQueryDecimal("pay_order_amount", 0.1M); //订单金额
             
             //创建支付应答对象
             RequestHandler packageReqHandler = new RequestHandler(null);

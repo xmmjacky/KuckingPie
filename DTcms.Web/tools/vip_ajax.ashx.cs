@@ -47,7 +47,7 @@ namespace DTcms.Web.tools
             var AreaId = DTRequest.GetFormString("AreaId");
             var AreaName = DTRequest.GetFormString("AreaName");
             var NickName = DTRequest.GetFormString("NickName");
-            var userId = DTRequest.GetFormString("UserId");
+            var userId = DTRequest.GetFormString("serId");
             if (string.IsNullOrEmpty(userId)) userId = "0";
             if (string.IsNullOrEmpty(AreaId)) AreaId = "0";
             if (string.IsNullOrEmpty(Amount)) Amount = "0";

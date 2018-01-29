@@ -1355,3 +1355,23 @@
    在 DTcms.Web.tools.admin_ajax.ProcessRequest(HttpContext context) 位置 C:\Users\xinmi\Documents\Tencent Files\83126058\FileRecv\MobileFile\LuckingPie\LuckingPie\DTcms.Web\tools\admin_ajax.ashx.cs:行号 87
    在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
    在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)<br/>内容:执行超时已过期。完成操作之前已超时或服务器未响应。 <br/>来源:.Net SqlClient Data Provider<br/><br/>FormParam:<br/><br/>GuestIp:127.0.0.1<br/><br/>CookieParam:ASP.NET_SessionId:0elsjjgq2fnlp3s2va3jnfy5:0001-01-01 0:00:00DTRememberName:frank3660@126.com:0001-01-01 0:00:00AdminName:DTcms=frank3660@126.com:0001-01-01 0:00:00AdminPwd:DTcms=29435F55446A8A8C09D68363DCC37A26:0001-01-01 0:00:00<br/>
+[Start]记录时间：2018-01-29 11:17:15,580 线程ID:[5] 日志级别：INFO  出错类：DTcms.Common.Log property:[(null)] - 错误描述：<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[out_trade_no参数长度有误]]></return_msg>
+</xml>
+[Start]记录时间：2018-01-29 11:22:31,602 线程ID:[5] 日志级别：INFO  出错类：DTcms.Common.Log property:[(null)] - 错误描述：<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[out_trade_no参数长度有误]]></return_msg>
+</xml>
+记录时间：2018-01-29 11:24:56,249 线程ID:[6] 日志级别：INFO  出错类：DTcms.Common.Log property:[(null)] - 错误描述：<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[out_trade_no参数长度有误]]></return_msg>
+</xml>
+[Start]记录时间：2018-01-29 13:17:08,531 线程ID:[5] 日志级别：INFO  出错类：DTcms.Common.Log property:[(null)] - 错误描述：<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[out_trade_no参数长度有误]]></return_msg>
+</xml>
+[Start]记录时间：2018-01-29 13:18:13,944 线程ID:[5] 日志级别：INFO  出错类：DTcms.Common.Log property:[(null)] - 错误描述：<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[out_trade_no参数长度有误]]></return_msg>
+</xml>

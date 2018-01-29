@@ -24,5 +24,7 @@ namespace BookingFood.Model.Pay
         public int UserId { get; set; }
 
         public string AddAmount { get; set; }
+
+        public int type { get; set; }
     }
 }

@@ -91,6 +91,7 @@
     <Content Include="api\payment\mppay\feedback.aspx" />
     <Content Include="api\payment\mppay\index.aspx" />
     <Content Include="api\payment\mppay\jquery-1.7.2.min.js" />
+    <Content Include="api\payment\mppay_native\chargefeedback.aspx" />
     <Content Include="api\payment\mppay_native\feedback_offline.aspx" />
     <Content Include="api\payment\mppay_native\feedback.aspx" />
     <Content Include="api\payment\teegon_jsapi\feedback2.aspx" />
@@ -813,6 +814,13 @@
     </Compile>
     <Compile Include="api\payment\mppay\index.aspx.designer.cs">
       <DependentUpon>index.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="api\payment\mppay_native\chargefeedback.aspx.cs">
+      <DependentUpon>chargefeedback.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="api\payment\mppay_native\chargefeedback.aspx.designer.cs">
+      <DependentUpon>chargefeedback.aspx</DependentUpon>
     </Compile>
     <Compile Include="api\payment\mppay_native\feedback_offline.aspx.cs">
       <DependentUpon>feedback_offline.aspx</DependentUpon>

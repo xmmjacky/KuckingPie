@@ -16,6 +16,8 @@ using TeeGonSdk.Domain;
 using TeeGonSdk.Request;
 using TeeGonSdk.Response;
 using System.Web.Script.Serialization;
+using BookingFood.Model.Pay;
+using Orm.Son.Core;
 
 namespace DTcms.Web.tools
 {
@@ -24,6 +26,7 @@ namespace DTcms.Web.tools
     /// </summary>
     public class submit_ajax : IHttpHandler, IRequiresSessionState
     {
+        private readonly string strcon = "ConnectionString";
         Model.siteconfig siteConfig = new BLL.siteconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_SITE_XML_CONFING));
         Model.userconfig userConfig = new BLL.userconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_USER_XML_CONFING));
         private static TeeGonSdk.ITopClient Client = new TeeGonSdk.DefaultTopClient("https://api.teegon.com/", "bxkgovptblsbxe4zyi7ixbdh", "ot5rhjgescrhcewcex65uamkcypaaxfu");
@@ -112,6 +115,9 @@ namespace DTcms.Web.tools
                     break;
                 case "order_save": //保存订单
                     order_save(context);
+                    break;
+                case "vip_charge"://会员充值
+                    Vip_charge(context);
                     break;
                 case "order_cancel": //用户取消订单
                     order_cancel(context);
@@ -2106,7 +2112,7 @@ namespace DTcms.Web.tools
                     packageReqHandler.SetParameter("notify_url", System.Configuration.ConfigurationManager.AppSettings["TenPayV3_TenpayNativeNotify"]);         //接收财付通通知的URL
                     packageReqHandler.SetParameter("trade_type", TenPayV3Type.NATIVE.ToString());                       //交易类型
                     packageReqHandler.SetParameter("product_id", result.ToString());                        //商品ID
-
+                   
                     string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
                     packageReqHandler.SetParameter("sign", sign);                       //签名
 
@@ -2159,6 +2165,104 @@ namespace DTcms.Web.tools
         }
         #endregion
 
+        #region vip用户充值-------
+        private void Vip_charge(HttpContext context)
+        {
+            BLL.siteconfig bll = new BLL.siteconfig();
+            Model.siteconfig siteConfig = bll.loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_SITE_XML_CONFING));
+            //int payment_id = 5;
+
+            var areaid = DTRequest.GetFormInt("areaid");
+            var areaname = DTRequest.GetFormString("areaname");
+            var amount = DTRequest.GetFormDecimal("amount", 0.00M);
+            int chargetype = DTRequest.GetFormInt("chargetype");
+            string nickname = DTRequest.GetFormString("nickname");
+            string openid = DTRequest.GetFormString("openid");
+            var userid = DTRequest.GetFormString("userid");
+
+            //var orderno=
+            #region 添加充值记录
+            var chargeres = 0L;
+
+            var req = new dt_user_top_up()
+            {
+                OpenId = openid,
+                Amount = Convert.ToDecimal(amount),
+                AreaId = Convert.ToInt32(areaid),
+                AreaName = areaname,
+                NickName = nickname,
+                IsDeleted = 0,
+                State = 0,
+                UserId = Convert.ToInt32(userid),
+                Type = chargetype,
+                Paystate=0
+            };
+            using (var db = new SonConnection(strcon))
+            {
+                chargeres = db.Insert(req);
+            }
+
+
+            #endregion
+            //创建支付应答对象
+            RequestHandler packageReqHandler = new RequestHandler(null);
+            //初始化
+            packageReqHandler.Init();
+            //packageReqHandler.SetKey(""/*TenPayV3Info.Key*/);
+
+            string timeStamp = TenPayUtil.GetTimestamp();
+            string nonceStr = TenPayUtil.GetNoncestr();
+
+
+            //设置package订单参数
+            packageReqHandler.SetParameter("appid", siteConfig.mp_slave_appid);       //公众账号ID
+            packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);         //商户号
+            packageReqHandler.SetParameter("nonce_str", nonceStr);                    //随机字符串
+            packageReqHandler.SetParameter("body", siteConfig.webname + (chargetype == 0 ? "兑换优惠券" : "充1000送100"));
+            packageReqHandler.SetParameter("out_trade_no", chargeres.ToString());     //商家订单号
+            packageReqHandler.SetParameter("total_fee", (amount * 100).ToString().Replace(".00", ""));                  //商品金额,以分为单位(money * 100).ToString()
+#if DEBUG
+            packageReqHandler.SetParameter("spbill_create_ip", "112.238.70.141");   //用户的公网ip，不是商户服务器IP
+#else
+                packageReqHandler.SetParameter("spbill_create_ip", context.Request.UserHostAddress);   //用户的公网ip，不是商户服务器IP
+#endif
+            packageReqHandler.SetParameter("notify_url", System.Configuration.ConfigurationManager.AppSettings["TenPayV3_TenpayNativeNotify"]);         //接收财付通通知的URL
+            packageReqHandler.SetParameter("trade_type", TenPayV3Type.NATIVE.ToString());                       //交易类型
+            packageReqHandler.SetParameter("product_id", chargeres.ToString());                        //商品ID
+
+            string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
+            packageReqHandler.SetParameter("sign", sign);                       //签名
+            packageReqHandler.SetParameter("attach", chargetype.ToString());
+            string data = packageReqHandler.ParseXML();
+
+            var mppay_result = TenPayV3.Unifiedorder(data);
+            var res = XDocument.Parse(mppay_result);
+            string prepayId = string.Empty;
+            string code_url = string.Empty;
+            try
+            {
+                prepayId = res.Element("xml").Element("prepay_id").Value;
+                code_url = res.Element("xml").Element("code_url").Value;
+            }
+            catch (Exception)
+            {
+                Log.Info(res.ToString());
+            }
+            var MpForHere = "charege";
+            //设置支付参数
+            RequestHandler paySignReqHandler = new RequestHandler(null);
+            paySignReqHandler.SetParameter("appId", siteConfig.mp_slave_appid);
+            paySignReqHandler.SetParameter("timeStamp", timeStamp);
+            paySignReqHandler.SetParameter("nonceStr", nonceStr);
+            paySignReqHandler.SetParameter("package", string.Format("prepay_id={0}", prepayId));
+            paySignReqHandler.SetParameter("signType", "MD5");
+            string paySign = paySignReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
+            string package = string.Format("prepay_id={0}", prepayId);
+            context.Response.Write("{\"msg\":1,\"mppay\":\"1\", \"timestamp\":\"" + timeStamp + "\",\"noncestr\":\"" + nonceStr
+                + "\",\"paysign\":\"" + paySign + "\",\"package\":\"" + package + "\",\"forhere\":\"" + MpForHere + "\"}");
+
+        }
+        #endregion
         #region 用户取消订单OK=================================
         private void order_cancel(HttpContext context)
         {
@@ -4536,7 +4640,7 @@ namespace DTcms.Web.tools
                 + areaid + ") Order By BeginTime Asc").FirstOrDefault();
             StringBuilder sb = new StringBuilder();
             DataTable carnivalOfflineDetail = null;
-            Model.users userModel = new BLL.users().GetModel(openid);        
+            Model.users userModel = new BLL.users().GetModel(openid);
             if (carnivalOffline != null && userModel.company_id != 0)
             {
                 BookingFood.Model.bf_area modelArea = new BookingFood.BLL.bf_area().GetModel(int.Parse(areaid));
