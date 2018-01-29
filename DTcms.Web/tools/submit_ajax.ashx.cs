@@ -2213,36 +2213,39 @@ namespace DTcms.Web.tools
             string timeStamp = TenPayUtil.GetTimestamp();
             string nonceStr = TenPayUtil.GetNoncestr();
 
-
+            amount = Convert.ToDecimal(amount.ToString("#0.00"));
             //设置package订单参数
             packageReqHandler.SetParameter("appid", siteConfig.mp_slave_appid);       //公众账号ID
             packageReqHandler.SetParameter("mch_id", TenPayV3Info.MchId);         //商户号
-            packageReqHandler.SetParameter("nonce_str", nonceStr);                    //随机字符串
+            packageReqHandler.SetParameter("nonce_str", nonceStr);                    //随机字符串                 //随机字符串
             packageReqHandler.SetParameter("body", siteConfig.webname + (chargetype == 0 ? "兑换优惠券" : "充1000送100"));
             packageReqHandler.SetParameter("out_trade_no", chargeres.ToString());     //商家订单号
-            packageReqHandler.SetParameter("total_fee", (amount * 100).ToString().Replace(".00", ""));                  //商品金额,以分为单位(money * 100).ToString()
+            packageReqHandler.SetParameter("total_fee", (amount * 100).ToString().Replace(".00", ""));
+            //packageReqHandler.SetParameter("total_fee", "1");  //商品金额,以分为单位(money * 100).ToString()
 #if DEBUG
             packageReqHandler.SetParameter("spbill_create_ip", "112.238.70.141");   //用户的公网ip，不是商户服务器IP
 #else
                 packageReqHandler.SetParameter("spbill_create_ip", context.Request.UserHostAddress);   //用户的公网ip，不是商户服务器IP
 #endif
-            packageReqHandler.SetParameter("notify_url", System.Configuration.ConfigurationManager.AppSettings["TenPayV3_TenpayNativeNotify"]);         //接收财付通通知的URL
-            packageReqHandler.SetParameter("trade_type", TenPayV3Type.NATIVE.ToString());                       //交易类型
-            packageReqHandler.SetParameter("product_id", chargeres.ToString());                        //商品ID
-
+            packageReqHandler.SetParameter("notify_url", System.Configuration.ConfigurationManager.AppSettings["TenPayV3_ChargeNativeNotify"]);         //接收财付通通知的URL
+            packageReqHandler.SetParameter("trade_type", TenPayV3Type.JSAPI.ToString());                        //交易类型
+            packageReqHandler.SetParameter("openid", openid);                       //用户的openId                                                                                                    /* packageReqHandler.SetParameter("product_id", chargeres.ToString());      */                  //商品ID
             string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
             packageReqHandler.SetParameter("sign", sign);                       //签名
-            packageReqHandler.SetParameter("attach", chargetype.ToString());
+            Log.Info("Sing：" + sign);
+            //packageReqHandler.SetParameter("attach", chargetype.ToString());
             string data = packageReqHandler.ParseXML();
 
             var mppay_result = TenPayV3.Unifiedorder(data);
             var res = XDocument.Parse(mppay_result);
             string prepayId = string.Empty;
-            string code_url = string.Empty;
+            //string code_url = string.Empty;
             try
             {
+                
                 prepayId = res.Element("xml").Element("prepay_id").Value;
-                code_url = res.Element("xml").Element("code_url").Value;
+                Log.Info("prepayId" + prepayId);
+                //code_url = res.Element("xml").Element("code_url").Value;
             }
             catch (Exception)
             {

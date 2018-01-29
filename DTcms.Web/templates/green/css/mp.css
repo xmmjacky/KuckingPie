@@ -1293,6 +1293,16 @@ height: 55px;
                 padding-top: 16px;
             }
 
+             .person_charge{
+                background-image: url(/templates/green/joincompany/join_company11.png);
+                width: 110px;
+                height: 110px;
+                background-size: 110px;
+                padding-left: 15px;
+                box-sizing: border-box;
+                padding-top: 16px;
+            }
+
         @media screen and (max-width: 320px) {
             .content {
                 width: 300px;

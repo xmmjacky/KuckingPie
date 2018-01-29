@@ -9,6 +9,9 @@
     <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
     <script src="{config.templateskin}/js/jquery-ui.min.js" type="text/javascript"></script>
     <link media="screen" type="text/css" href="{config.templateskin}/css/jquery-ui.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.2&key=7d8ed28d4ece5addd313d27d53d91b75"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
     <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script type="text/javascript">
@@ -18,7 +21,7 @@
             timestamp: {jstimestamp}, // 必填，生成签名的时间戳
                     nonceStr: '{jsnoncestr}', // 必填，生成签名的随机串
                     signature: '{mp_signature}',// 必填，签名，见附录1
-            jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            jsApiList: ['chooseWXPay','onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
         wx.ready(function(){
             <%if modelCompay!=null%>
@@ -95,7 +98,7 @@
 
         });
 
-        
+
     </script>
 
     <style>
@@ -132,8 +135,10 @@
                 padding-top: 60px;
                 font-size: 18px;
             }
+
                 .content .cont.show {
-                    padding-top: 20px;padding-left: 5px;
+                    padding-top: 20px;
+                    padding-left: 5px;
                 }
 
 
@@ -220,10 +225,12 @@
             .content .red {
                 color: rgb(230,0,19);
             }
-            .content .cont img{
-                width:100px;
+
+            .content .cont img {
+                width: 100px;
             }
-            .content .cont .person_info{
+
+            .content .cont .person_info {
                 background-image: url(/templates/green/joincompany/join_company_5.png);
                 width: 110px;
                 height: 110px;
@@ -233,16 +240,30 @@
                 padding-top: 16px;
             }
 
+        .person_charge {
+            background-image: url(/templates/green/joincompany/join_company_11.png);
+            width: 110px;
+            height: 110px;
+            background-size: 110px;
+            padding-left: 15px;
+            box-sizing: border-box;
+            padding-top: 16px;
+        }
+
         @media screen and (max-width: 320px) {
             .content {
                 width: 300px;
             }
-            .content .cont.show {
-                    padding-top: 5px;padding-left: 5px;
+
+                .content .cont.show {
+                    padding-top: 5px;
+                    padding-left: 5px;
                 }
-            .content .cont img{
-                width:80px;
-            }
+
+                .content .cont img {
+                    width: 80px;
+                }
+
                 .content .welcome {
                     width: 110px;
                 }
@@ -251,19 +272,23 @@
                     padding-top: 40px;
                     font-size: 16px;
                 }
-                .content .cont .red{
-                    width: 100px;
-                    margin: 0px;
-                }
-                .content .cont .purple{
-                    width: 100px;
-                    margin: 0px;
-                }
-                .content .submit{
+
+                    .content .cont .red {
+                        width: 100px;
+                        margin: 0px;
+                    }
+
+                    .content .cont .purple {
+                        width: 100px;
+                        margin: 0px;
+                    }
+
+                .content .submit {
                     width: 300px;
                     font-size: 14px;
                 }
-                .content .cont .person_info{
+
+                .content .cont .person_info {
                     width: 95px;
                     height: 95px;
                     background-size: 95px;
@@ -277,6 +302,7 @@
         var isInArea = 1;
         var areaId = 0;
         $(function () {
+            ShowAddress();
             $('#btnSubmit').on('click', function () {
                 if ($('#txtCompanyName').val().length == 0) { alert('请输入公司'); return false; }
                 if ($('#txtCompanyAddress').val().length == 0) { alert('请输入地址'); return false; }
@@ -321,10 +347,164 @@
                     timeout: 20000
                 });
             });
-            
+
+
+            $(".person_charge").on('click',function(){
+                //alert('充值');
+                submitCharge(5,1);
+            })
+
+            $("#btnShare").on('click',function(){
+                if($("#chargevalue").val()==""||$("#chargevalue").val==undefined){
+                    return;
+                }
+                //alert("优惠券兑换");
+                submitCharge(5,0);
+            })
         });
+
+        //会员充值
+        function submitCharge(paymentid, type) {
+            paymentid==5
+            var amout = "";
+            if (type == 0) {
+                amout = $('#chargevalue').val();
+            } else {
+                //充一千送100
+                amout = 1000;
+            }
+            $.ajax({
+                type: "post",
+                url: "/tools/submit_ajax.ashx?action=vip_charge",
+                data: {
+                    nickname: $('#nickname').val(),
+                    areaid: $('#hfAreaId').val(),
+                    areaname: $('#hfAreaTitle').val(),
+                    openid: $('#openid').val(),
+                    amount: amout,
+                    chargetype:type,
+                    userid: $('#userid').val(),
+                },
+                dataType: "json",
+                beforeSend: function (XMLHttpRequest) {
+                    //发送前动作
+                },
+                success: function (data, textStatus) {
+                    $('#chargevalue').val('');
+                    if (!data) return;
+                    if (data.msg == 1) {
+                        if (data.url) {
+                            location.href = data.url;
+                        } else if (data.mppay) {
+                            if (data.mppay == 1) {
+                                wx.chooseWXPay({
+                                    timestamp: data.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                                    nonceStr: data.noncestr, // 支付签名随机串，不长于 32 位
+                                    package: data.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+                                    signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                                    paySign: data.paysign, // 支付签名
+                                    success: function (res) {
+                                        // 支付成功后的回调函数
+                                        if (res.errMsg == "chooseWXPay:ok") {
+                                            alter("支付成功");
+                                            setTimeout(function () {
+                                                location.href = '/mp_join_company.aspx?state=slave&openid=' + $('#openid').val();
+                                            }, 5000);
+                                        }
+                                    }
+                                });
+                            } else {
+                                location.href = data.pay_location;
+                            }
+                        } else {
+                            if (data.msgbox) {
+                                alert(data.msgbox);
+                            }
+                            if (data.carnivalnums) {
+                                alert(data.carnivalnums);
+                            }
+                            setTimeout(function () {
+                                if ($('#hfAdditional').val().length) {
+                                    location.href = '/mp_index.aspx?openid=' + $('#openid').val();
+                                }
+                            }, 5000);
+                        }
+
+                    } else {
+                        if (data.msgbox) {
+                            alert(data.msgbox);
+                        }
+                    }
+
+
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('支付不成功');
+                },
+                timeout: 50000
+            });
+
+        }
+
+        function ShowAddress() {
+            var map, geolocation;
+            //加载地图，调用浏览器定位服务
+            map = new AMap.Map('container', {
+                resizeEnable: true
+            });
+            map.plugin('AMap.Geolocation', function () {
+                geolocation = new AMap.Geolocation({
+                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                    timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                    zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                    buttonPosition: 'RB'
+                });
+                map.addControl(geolocation);
+                geolocation.getCurrentPosition();
+                AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+                AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
+            });
+            //解析定位结果
+            function onComplete(data) {
+                $.ajax({
+                    success: function (data) {
+                        if (!data) return;
+                        if (data.Status == 1) {
+                            isInArea = true;
+                            var areaid = parseInt(data.Id);
+                            $('#hfAreaId').val(areaid);
+                            $('#hfAreaTitle').val(data.Title);
+                        } else {
+                            $("#hfAreaTitle").val('待定区');
+                            $("#hfAreaId").val('18');
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $("#hfAreaTitle").val('待定区');
+                        $("#hfAreaId").val('18');
+                    },
+                    url: '/tools/submit_ajax.ashx?action=get_polygon_contain',
+                    data: {
+                        position: data.position.getLat() + ',' + data.position.getLng(),
+                        openid: $('#openid').val()
+                    },
+                    type: "post",
+                    dataType: "json",
+                    timeout: 60000
+                });
+
+            }
+            //解析定位错误信息
+            function onError(data) {
+                $("#hfAreaTitle").val('待定区');
+                $("#hfAreaId").val('18');
+            }
+        }
+
     </script>
-    
+
 </head>
 <body>
     <%if userModel.company_id==0%>
@@ -350,7 +530,7 @@
                 </tr>
             </table>
         </div>
-        
+
     </div>
     <%else%>
     <div class="content">
@@ -361,20 +541,21 @@
     <%else%>
     <div class="content">
         <img src="/templates/green/joincompany/join_company_1.png" style="width:100%;height:100%;position:relative;" />
-        <div class="cont show" >
+        <div class="cont show">
             <table>
                 <tr>
                     <td colspan="3" style="color: rgb(72,24,42);font-size: 16px;padding-left: 55px;font-weight: bold;">
                         {modelCompay.CompanyName}VIP卡
                     </td>
                 </tr>
+
                 <tr>
                     <td rowspan="4">
-                        <img src="/company_qr/qr_{modelCompay.Id}.jpg"/>
+                        <img src="/company_qr/qr_{modelCompay.Id}.jpg" />
                     </td>
-                    <td><div class="red"><span>满29减2元/</span><span>堂吃</span></div></td>
+                    <!--<td><div class="red"><span>满29减2元/</span><span>堂吃</span></div></td>-->
                     <td rowspan="4">
-                        <div  class="person_info">
+                        <div class="person_info">
                             <table>
                                 <tr>
                                     <td rowspan="2" style="width: 38px;color: rgba(0,161,233,1);font-size: 27px;text-align: center;">{modelCompay.PersonCount}</td>
@@ -395,6 +576,27 @@
                     </td>
                 </tr>
                 <tr>
+                    <td rowspan="4">
+                        <div class="person_charge chargeone">
+                            <table>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(0,161,233,1);"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(0,161,233,1);"></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(234,85,22,1);"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+
+                </tr>
+
+
+
+                <!--<tr>
                     <td><div class="red"><span>堂吃抵扣现磨饮料</span></div></td>
 
                 </tr>
@@ -403,10 +605,17 @@
                 </tr>
                 <tr>
                     <td><div class="purple"><span>免外送费</span></div></td>
-                </tr>
+                </tr>-->
 
             </table>
         </div>
+
+        <a class="submit" id="btncharge" style="width: 350px;display:none">优惠券充值</a>
+        <input id="userid" type="hidden" value="{userModel.id}" />
+        <input id="openid" type="hidden" value="{openid}" />
+        <input id="nickname" type="hidden" value="{userModel.nick_name}" />
+        <input id="hfAreaId"  type="hidden" value=""/>
+        <input id="hfAreaTitle" type="hidden" value="" />
         <a href="javascript:void(0)" class="submit" id="btnShare" style="width: 350px;">分享上图VIP码,每扫码增加一位,余额增加2元</a>
     </div>
     <%/if%>
@@ -416,12 +625,16 @@
             <span class="yellow" style="font-size:26px;">余额从哪里来？</span>
         </div>
         <p class="red" style="font-size:23px;">
-              1.分享公司群，余额蹭蹭涨<br />
+            1.分享公司群，余额蹭蹭涨<br />
             2.多用微信下单，系统自动赠余额<br />
             </span>
         </p>
+        <b class="status_txt"></b>
     </div>
-    <img src="/templates/green/joincompany/join_company_8.png" style="width:50%;margin: 0px auto;display: block;" />
+    <div class="content" style="margin-top: 5%;">
+        <input id="chargevalue" type="number" style=" background:#603813;width:60px" />
+    </div>
+    <!--<img src="/templates/green/joincompany/join_company_8.png" style="width:50%;margin: 0px auto;display: block;" />-->
     <input type="hidden" id="hfOpenId" value="{openid}" />
     <%template src=/_cnzz.html/%>
 </body>

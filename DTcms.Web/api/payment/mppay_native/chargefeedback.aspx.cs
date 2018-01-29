@@ -60,8 +60,8 @@ namespace DTcms.Web.api.payment.mppay_native
                         var userconfirm = new dt_user_confirm_top()
                         {
                             IsDeleted = 0,
-                            AddAmount = (userinfo.Amount * 100).ToString(),
-                            Amount = userinfo.Amount * 100 + userinfo.Amount,
+                            AddAmount = userinfo.Amount.ToString(),
+                            Amount = userinfo.Amount+100,
                             OpneId = userinfo.OpenId,
                             AreaId = userinfo.AreaId,
                             AreaName = userinfo.AreaName,
