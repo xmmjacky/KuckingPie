@@ -92,7 +92,7 @@ namespace DTcms.Web.frank3660.vipUser
            
             var sqlstr = string.Format(@"SELECT w2.n, w1.* FROM dt_user_Top_up w1,
 (SELECT TOP {0} row_number() OVER (ORDER BY CreateTime DESC, Id DESC) n, Id FROM dt_user_Top_up) w2 
-WHERE w1.Id = w2.Id AND w2.n > {1} {2} ORDER BY w2.n ASC ", this.pageSize * this.page, (this.page - 1) * this.pageSize,strTemp);
+WHERE w1.Id = w2.Id AND w2.n > {1} AND w1.Paystate=1 AND w1.Type=0 AND w1.State=0 {2} ORDER BY w2.n ASC ", this.pageSize * this.page, (this.page - 1) * this.pageSize,strTemp);
             return sqlstr.ToString();
         }
         #endregion

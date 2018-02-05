@@ -19,7 +19,7 @@ namespace DTcms.Web.UI.Page
         protected string jsnoncestr = string.Empty;
         protected string jstimestamp = string.Empty;
         protected string mp_signature = string.Empty, distributionArea = string.Empty;
-
+        public int useraccount = 0;
         protected override void ShowPage()
         {
             this.Init += mp_discount_Init;       
@@ -35,7 +35,7 @@ namespace DTcms.Web.UI.Page
             modelRegisterCompany = list.Count > 0 ? list[0] : null;
             BookingFood.BLL.bf_user_voucher bllVoucher = new BookingFood.BLL.bf_user_voucher();
             totalAmount = (int)(bllVoucher.GetModelList("UserId=" + userModel.id + " and GetDate()<ExpireTime  and Status=0 ").Sum(s=>s.Amount));
-
+             useraccount = Convert.ToInt32(userModel.account);
             jsnoncestr = JSSDKHelper.GetNoncestr();
             jstimestamp = JSSDKHelper.GetTimestamp();
             string jsapi_token = JsApiTicketContainer.TryGetTicket(config.mp_slave_appid, config.mp_slave_appsecret);

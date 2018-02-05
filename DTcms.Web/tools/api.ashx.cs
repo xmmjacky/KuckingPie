@@ -276,7 +276,7 @@ namespace DTcms.Web.tools
             //DTcms.Common.Log.Info("downloadlistfordispatch:areaids_" + dtUser.Rows[0]["orderarea"].ToString());
             DTcms.BLL.orders bllOrder = new BLL.orders();
             DataTable dtOrder = bllOrder.GetList(30,
-                " ((is_download=0 and (payment_id=1 or payment_id=2)) or (is_download=0 and (payment_id in (3,5,6,7,8)) and payment_status=2))"
+                " ((is_download=0 and (payment_id=1 or payment_id=2)) or (is_download=0 and (payment_id in (3,5,6,7,8,9)) and payment_status=2))"
                 + " and OrderType='线下订单' and status in (1,2,3) "
                 + " and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
             string ret = string.Empty;

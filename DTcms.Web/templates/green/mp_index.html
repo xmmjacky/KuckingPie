@@ -8,7 +8,8 @@
     <meta content="{config.webdescription}" name="description">
     <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
     <script src="{config.templateskin}/js/jquery.cookie.js" type="text/javascript"></script>
-    <script src="{config.templateskin}/js/mp.js?ver=148" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.4&key=7d8ed28d4ece5addd313d27d53d91b75"></script>
     <link media="screen" type="text/css" href="{config.templateskin}/css/mp.css?ver=54" rel="stylesheet">
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
@@ -16,9 +17,7 @@
     <link media="screen" type="text/css" href="{config.templateskin}/css/jquery-ui.min.css" rel="stylesheet">
     <script src="{config.templateskin}/grumble/js/jquery.grumble.min.js" type="text/javascript"></script>
     <link media="screen" type="text/css" href="{config.templateskin}/grumble/css/grumble.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
-    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.2&key=7d8ed28d4ece5addd313d27d53d91b75"></script>
-    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script src="{config.templateskin}/js/mp.js?ver=148" type="text/javascript"></script>
     <script type="text/javascript">
         wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -26,12 +25,13 @@
             timestamp: {jstimestamp}, // 必填，生成签名的时间戳
                     nonceStr: '{jsnoncestr}', // 必填，生成签名的随机串
                     signature: '{mp_signature}',// 必填，签名，见附录1
-            jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                    jsApiList: ['chooseWXPay','getLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
+       
         wx.error(function(res){
             // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，
             //也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-
+            alert(res);
         });
         var auto_areas = new Array();
         <%loop drAreaOffline dtOfflineArea%>
@@ -60,6 +60,7 @@
     </style>
 </head>
 <body style="background-repeat:no-repeat;background-size:100% 100%;">
+    <div style="display:none" id='container'></div>
     <div id="DivLocker" style="position:absolute;background-color:rgba(0, 0, 0,0.5);filter:alpha(opacity=30);overflow:hidden;z-index:5;display:none;">
         <img src="/templates/green/img/mp_loading.gif" style="margin:100px auto;display:block;" />
     </div>
@@ -71,7 +72,7 @@
         <div style="width: 100%;margin: 40% 0%;text-align: center;">
             <span style="color: red;font-size: 28px;font-weight: bold;" id="confirmTip1">【特别提醒】<br />请核对当前下单店铺地址<br />下单即做 无法改退单</span>
             <div style="background-color: rgb(233,84,18);width: 280px;margin: 15px auto;padding: 10px 0px;border-radius: 15px;">
-                <span style="font-weight: bold;font-size: 28px;color: white;display: block;">馍王<font id="confirmTitle"></font></span>
+                <span style="font-weight: bold;font-size: 28px;color: white;display: block;">LUCKINGPIE<font id="confirmTitle"></font></span>
                 <i style="border-top: 1px dotted white;width: 40px;display: inline-block;vertical-align: middle;"></i>
                 <span style="color: white;" id="confirmAddress"></span>
                 <i style="border-top: 1px dotted white;width: 40px;display: inline-block;vertical-align: middle;"></i>
@@ -85,7 +86,7 @@
         <div style="width: 100%;margin: 40% 0%;text-align: center;">
             <span style="color:white; font-size: 28px;font-weight: bold;" id="confirmTip1">您的外卖将由</span>
             <div style="background-color: rgb(233,84,18);width: 280px;margin: 15px auto;padding: 10px 0px;border-radius: 15px;">
-                <span style="font-weight: bold;font-size: 28px;color: white;display: block;">馍王<font id="TipAreaAddressTitle"></font></span>
+                <span style="font-weight: bold;font-size: 28px;color: white;display: block;">LUCKINGPIE<font id="TipAreaAddressTitle"></font></span>
                 <i style="border-top: 1px dotted white;width: 40px;display: inline-block;vertical-align: middle;"></i>
                 <span style="color: white;" id="TipAreaAddressAddress"></span>
                 <i style="border-top: 1px dotted white;width: 40px;display: inline-block;vertical-align: middle;"></i>
@@ -108,11 +109,11 @@
             <ul>
                 <li class="item" style="background-color: white;">
                     <img src="/templates/green/holiday/logo_waimai.png" style="width: 75px;margin-top: 18px;" />
-                    <span style="display: block;color: rgb(97,57,28);font-size: 21px;font-weight: bold;">馍王送</span>
+                    <span style="display: block;color: rgb(97,57,28);font-size: 21px;font-weight: bold;">叫外卖</span>
                 </li>
                 <li class="item" style="background-color: white; ">
                     <img src="/templates/green/holiday/logo_tangchi.png" style="width: 115px;margin-top: 22px;margin-bottom: 8px;" />
-                    <span style="display: block;color: rgb(97,57,28);font-size: 21px;font-weight: bold;">堂吃/打包</span>
+                    <span style="display: block;color: rgb(97,57,28);font-size: 21px;font-weight: bold;">堂吃/外带</span>
                     <span class="quan">券</span>
                 </li>
                 <%if modelCompany!=null%>
@@ -217,7 +218,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="tdTip" style="vertical-align: bottom;"><div class="purple"><span>满99减5元/</span><span>外卖</span></div></td>
+                                <td class="tdTip" style="vertical-align: bottom;"><div class="purple"><span>30分钟速达/</span><span>外卖</span></div></td>
                                 <td rowspan="2">
                                     <div class="person_info">
                                         <table style="margin-bottom:3px">
@@ -256,7 +257,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="tdTip" style="vertical-align: bottom;"><div class="red"><span>满39减2元/</span><span>堂吃</span></div></td>
+                                <td class="tdTip" style="vertical-align: bottom;"><div class="red"><span>路上点餐,到店就吃</span><span></span></div></td>
                                 <td rowspan="2">
                                     <div class="person_info">
                                         <table>
@@ -387,20 +388,26 @@
                     <div class="b_pay_offline b_full_width" style="display:none;" data-isshow="true">餐到付款</div>
                     <!--<div class="b_pay_online b_full_width" style="display:none;">支付宝支付</div>-->
                     <div class="b_pay_mppay b_full_width" style="display:none;" data-isshow="true">微信支付</div>
-                    <div class="b_pay_account b_full_width" style="display:none;" data-isshow="true">余额支付</div>
+                    <%if userModel.account>0%>
+                    <div class="b_pay_account b_full_width" style="display:none;" data-isshow="true">充值支付</div>
+                    <%/if%>
                     <div class="b_submit b_full_width">提交订单<span class="count" id="spanCount2">0</span>元</div>
                 </div>
             </div>
             <div class="btns" id="divCartOffline" style="display:none;">
                 <div class="btn_list">
-                    <div class="b_pay_offline b_half_width" style="display: block; top: -46px;right:0px;width:100%;" id="btnOfflineOutCompany">
-                        我一会到<i class="b_yes" style="margin-left: 10px;"></i>
+                    <div class="b_pay_offline b_half_width" style="display: block; top: -46px;width:50%;" id="btnOfflineOutCompany">
+                        一会到<i class="b_yes" style="margin-left: 10px;"></i>
                     </div>
+                    <div class="b_pay_offline b_half_width" style="display: block; top: -46px;right:0px;width:47%;"id="btnOfflineTakeOut">外带<i class="b_yes" style="margin-left: 10px;"></i></div>
                     <div class="b_continue b_full_width" id="btnOfflineContinue">继续订餐</div>
                 </div>
                 <div class="btn_list">
-                    <div class="b_pay_offline b_half_width" style="display: block; top: -46px;right:0px;width:100%;" id="btnOfflineTakeOut">外带<i class="b_yes" style="margin-left: 10px;"></i></div>
-                    <div class="b_submit b_full_width" id="btnOfflineSubmit"><font>立即支付</font><span class="count" id="spanCount3">0</span>元</div>
+                    <%if userModel.account>0%>
+                    <div class="b_pay_offline2 b_half_width" style="display: block; top: -46px;right:0px;width:100%;" id="btnOfflineaccount"><font>充值支付</font></div>
+                    <%/if%>
+                    <div class="b_submit b_full_width" id="btnOfflineSubmit"><font>微信支付</font><span class="count" id="spanCount3">0</span>元</div>
+                    
                 </div>
             </div>
             <div class="bottom_button">
@@ -553,7 +560,8 @@
     <input type="hidden" id="hfAvaliableCompanyAmount" value="{avaliableCompanyAmount}" />
     <input type="hidden" id="hfUserAddress" value="{userAddress}" />
     <input type="hidden" id="hfUserAddressId" value="" />
+    <input type="hidden" id="useraccount" value="{userModel.account}"/>
     <%template src=/_cnzz.html/%>
-    <div style="display:none" id='container'></div>
+  
 </body>
 </html>

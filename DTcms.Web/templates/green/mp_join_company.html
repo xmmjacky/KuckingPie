@@ -301,8 +301,10 @@
     <script type="text/javascript">
         var isInArea = 1;
         var areaId = 0;
+       
         $(function () {
             ShowAddress();
+           
             $('#btnSubmit').on('click', function () {
                 if ($('#txtCompanyName').val().length == 0) { alert('请输入公司'); return false; }
                 if ($('#txtCompanyAddress').val().length == 0) { alert('请输入地址'); return false; }
@@ -351,6 +353,7 @@
 
             $(".person_charge").on('click',function(){
                 //alert('充值');
+                
                 submitCharge(5,1);
             })
 
@@ -390,7 +393,6 @@
                     //发送前动作
                 },
                 success: function (data, textStatus) {
-                    $('#chargevalue').val('');
                     if (!data) return;
                     if (data.msg == 1) {
                         if (data.url) {
@@ -516,11 +518,11 @@
             <table>
                 <tr>
                     <th><span class="txt">公司</span></th>
-                    <td><input type="text" id="txtCompanyName" /></td>
+                    <td><input type="text" placeholder=" 简写即可" id="txtCompanyName" /></td>
                 </tr>
                 <tr>
                     <th><span class="txt">地址</span></th>
-                    <td><input type="text" placeholder="请正确填写，否则无法并入公司" id="txtCompanyAddress" /></td>
+                    <td><input type="text" placeholder=" 简写即可" id="txtCompanyAddress" /></td>
                 </tr>
                 <tr>
                     <th></th>
@@ -557,6 +559,7 @@
                     <td rowspan="4">
                         <div class="person_info">
                             <table>
+                                <%if useraccount==0%>
                                 <tr>
                                     <td rowspan="2" style="width: 38px;color: rgba(0,161,233,1);font-size: 27px;text-align: center;">{modelCompay.PersonCount}</td>
                                     <td style="font-size: 12px;color: rgba(0,161,233,1);">位</td>
@@ -564,9 +567,18 @@
                                 <tr>
                                     <td style="font-size: 12px;color: rgba(0,161,233,1);">同事</td>
                                 </tr>
+                                <%else%>
+                                <tr>
+                                    <td rowspan="2" style="width: 38px;color: rgba(138,38,133,1);font-size: 15px;text-align: center;">{useraccount}</td>
+                                    <td style="font-size: 12px;color: rgba(138,38,133,1);">元</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 12px;color: rgba(138,38,133,1);">充值</td>
+                                </tr>
+                                <%/if%>
                                 <tr>
                                     <td rowspan="2" style="width: 38px;color: rgba(234,85,22,1);font-size: 27px;text-align: center;">{totalAmount}</td>
-                                    <td style="font-size: 12px;color: rgba(234,85,22,1);">余额</td>
+                                    <td style="font-size: 12px;color: rgba(234,85,22,1);">抵扣</td>
                                 </tr>
                                 <tr>
                                     <td style="font-size: 12px;color: rgba(234,85,22,1);">元</td>
@@ -616,17 +628,18 @@
         <input id="nickname" type="hidden" value="{userModel.nick_name}" />
         <input id="hfAreaId"  type="hidden" value=""/>
         <input id="hfAreaTitle" type="hidden" value="" />
+        <input id="useraccount" type="hidden" value="{userModel.account}" />
         <a href="javascript:void(0)" class="submit" id="btnShare" style="width: 350px;">分享上图VIP码,每扫码增加一位,余额增加2元</a>
     </div>
     <%/if%>
     <div class="content" style="margin-top: 5%;">
         <div>
             <span class="yellow" style="font-size:26px;"></span>
-            <span class="yellow" style="font-size:26px;">余额从哪里来？</span>
+            <span class="yellow" style="font-size:22px;">欢迎加入您的专属VIP！</span>
         </div>
-        <p class="red" style="font-size:23px;">
-            1.分享公司群，余额蹭蹭涨<br />
-            2.多用微信下单，系统自动赠余额<br />
+        <p class="red" style="font-size:17px;">
+            余额:加入VIP赠送,仅限饮料兑换,有效期一个月<br />
+            充值:微信优惠充值,用于餐品支付,无时间限制<br />
             </span>
         </p>
         <b class="status_txt"></b>

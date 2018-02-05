@@ -1654,6 +1654,7 @@ namespace DTcms.Web.tools
             if (paymentid == 3) payment_id = 3;//支付宝
             if (paymentid == 5) payment_id = 5;//微信公众号支付
             if (paymentid == 6) payment_id = 6;//微信扫码支付
+            if (paymentid == 9) payment_id = 9;//余额支付
             //检查支付方式
             if (payment_id == 0)
             {
@@ -3493,6 +3494,7 @@ namespace DTcms.Web.tools
             }
             if (paymentid == 3) payment_id = 3;
             if (paymentid == 5) payment_id = 5;
+            if (paymentid == 9) payment_id = 9;
             //检查支付方式
             if (payment_id == 0)
             {
@@ -4158,6 +4160,42 @@ namespace DTcms.Web.tools
                 }
 
             }
+            else
+            {
+                if (payModel.id == 9)//余额支付
+                {
+                    #region 余额支付
+                    try
+                    {
+                        if (userModel.account > 0 && userModel.account >= model.order_amount)
+                        {
+                            userModel.account = userModel.account - model.order_amount;
+                            model.payment_status = 2;
+                            var bllUser = new BLL.users();
+
+                            if (bllUser.UpdateField(userModel.id, "account='" + userModel.account + "'")>0)
+                            {
+                                bllOrders.UpdateField(result, "payment_status='" + model.payment_status + "'");
+                                context.Response.Write("{\"msg\":1,\"msgbox\":\"支付完成\",\"forhere\":\"" + model.MpForHere + "\"}");
+                            }
+                            else
+                            {
+                                context.Response.Write("{\"msg\":-1,\"msgbox\":\"订单更新失败\",\"forhere\":\"" + model.MpForHere + "\"}");
+                            }
+                        }
+                        else
+                        {
+                            context.Response.Write("{\"msg\":-1,\"msgbox\":\"充值支付失败\",\"forhere\":\"" + model.MpForHere + "\"}");
+                           
+                        }
+                    }
+                    catch (Exception ex){
+                        Log.Info("余额支付："+ex.Message);
+                    }
+                    #endregion
+
+                }       
+            }
             #region 处理满送业务
             if (takeout == 0 && payModel.id == 1)//外卖订单，增加满送记录
             {
@@ -4501,6 +4539,7 @@ namespace DTcms.Web.tools
         {
             string position = DTRequest.GetFormString("position");
             string openid = DTRequest.GetFormString("openid");
+            Log.Info(string.Format(@"该{0}=====>定位数据:{1}", openid, position));
 #if DEBUG
             //position = "31.19206539,121.43165358";
             //position = "31.183325,121.425657";//北科

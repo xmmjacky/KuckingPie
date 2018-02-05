@@ -427,6 +427,10 @@ namespace DTcms.DAL
                 {
                     model.company_id = int.Parse(ds.Tables[0].Rows[0]["company_id"].ToString());
                 }
+                if (ds.Tables[0].Rows[0]["account"] != null && ds.Tables[0].Rows[0]["account"].ToString() != "")
+                {
+                    model.account = decimal.Parse(ds.Tables[0].Rows[0]["account"].ToString());
+                }
                 return model;
             }
             else

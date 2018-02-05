@@ -620,8 +620,20 @@ ul, ul li, form, dt, dl, dd {
 .b_pay_offline {
     background: #8ec31f; /*huodaofukuan*/
     position: absolute;
+    top: -132px;
+}
+.b_pay_offline2 {
+    background: #8ec31f; /*huodaofukuan*/
+    position: absolute;
+    top: -132px;
+}
+
+.b_pay_account {
+    background: #ED1E79; /*huodaofukuan*/
+    position: absolute;
     top: -88px;
 }
+
 
 .b_pay_online, .b_pay_mppay {
     background: #f39700;
@@ -629,7 +641,7 @@ ul, ul li, form, dt, dl, dd {
     top: -44px;
 }
 
-.b_continue, .b_submit, .b_pay_offline, .b_pay_online, .b_pay_mppay {
+.b_continue, .b_submit, .b_pay_offline,.b_pay_offline2, .b_pay_online, .b_pay_mppay,.b_pay_account {
     border-radius: 8px;
     width: 48%;
     line-height: 43px;

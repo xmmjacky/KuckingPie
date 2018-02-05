@@ -13,6 +13,7 @@ using DTcms.Common;
 using Senparc.Weixin.MP.Helpers;
 using Senparc.Weixin.MP.CommonAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs;
+using System.Web.Script.Serialization;
 
 namespace DTcms.Web.UI
 {
@@ -75,6 +76,7 @@ namespace DTcms.Web.UI
                     
                 }
                 userModel = new BLL.users().GetModel(openid);
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
                 BLL.users bllUsers = new BLL.users();
 #if DEBUG
 

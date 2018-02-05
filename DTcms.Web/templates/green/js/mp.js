@@ -230,11 +230,21 @@ $(function () {
             } else {
                 $(this).parent().find('div:not(:last)').hide();
             }
+            //if ($('#divCartOnline .b_pay_account:hidden').length) {
+            //    $(this).parent().find('div:hidden').show();
+            //} else {
+            //    $(this).parent().find('div:not(:last)').hide();
+            //}
         } else {
             if ($('#divCartOnline .b_pay_mppay:hidden').length) {
                 $('#divCartOnline .b_pay_mppay').show();
             } else {
                 $('#divCartOnline .b_pay_mppay').hide();
+            }
+            if ($('#divCartOnline .b_pay_account:hidden').length) {
+                $('#divCartOnline .b_pay_account').show();
+            } else {
+                $('#divCartOnline .b_pay_account').hide();
             }
         }
 
@@ -278,6 +288,45 @@ $(function () {
                 submitOrder(5, 2, remark);
             } else {
                 submitOrder(5, 1, remark);
+            }
+            $(this).parent().find('div:not(:last)').hide();
+            $(this).parent().prev().find('div:not(:last)').hide();
+        }
+    });
+    $('#btnOfflineaccount ').on('click', function () {
+        if ($(this).parent().find('div:hidden').length) {
+            $(this).parent().find('div:hidden').show();
+            $(this).parent().prev().find('div:hidden').show();
+            $('#btnOfflineaccount font').text('充值支付');
+        } else {
+            if ($('#divCarnivalOffline .item .unselect.cover').length) {
+                var cart = new Object();
+                if ($('#hfCookie').val() != "") {
+                    cart = $.parseJSON($('#hfCookie').val());
+                    var goodsid = $('#divCarnivalOffline .item .unselect.cover').parent().data('id');
+                    var cartgoodsid = goodsid + "†discount†";
+                    var isInCart = false;
+                    $.each(cart, function (key, val) {
+                        if (key.indexOf(cartgoodsid) > -1) {
+                            isInCart = true;
+                            return false;
+                        }
+                    });
+                }
+                if (!isInCart && $('#hfCookie').val() != "") {
+                    $('#btnCarnivalOffline').trigger('click');
+                    //alert('优惠产品请加入购物车');
+                    //return;
+                }
+            }
+            var remark = "";
+            if ($('#btnOfflineOutCompany .b_yes:visible').length) {
+                remark = "一会到";
+            }
+            if ($('#btnOfflineTakeOut .b_yes:visible').length) {
+                submitOrder(9, 2, remark);
+            } else {
+                submitOrder(9, 1, remark);
             }
             $(this).parent().find('div:not(:last)').hide();
             $(this).parent().prev().find('div:not(:last)').hide();
@@ -331,6 +380,10 @@ $(function () {
     $('#divCartOnline .b_pay_mppay').on('click', function () {
         $(this).parent().find('div:not(:last)').hide();
         submitOrder(5, 0);
+    });
+    $('#divCartOnline .b_pay_account').on('click', function () {
+        $(this).parent().find('div:not(:last)').hide();
+        submitOrder(9, 0);//余额
     });
     $('#divGoods').css('transform', 'translate(' + (0 - $(window).width() * parseInt($('#hfTab').val())) + 'px, 0px)');
     $('#divGoods').css('-ms-transform', 'translate(' + (0 - $(window).width() * parseInt($('#hfTab').val())) + 'px, 0px)');
@@ -1328,6 +1381,10 @@ function submitOrder(paymentid, takeout, remark) {
         ShowChangeFocus();
         return;
     }
+    if ($('#hfState').val() == 'master' && paymentid == 9) {
+        ShowChangeFocus();
+        return;
+    }
     ShowLocker();
     $.ajax({
         type: "post",
@@ -1488,10 +1545,11 @@ function searchCompanyList() {
     map.plugin('AMap.Geolocation', function () {
         geolocation = new AMap.Geolocation({
             enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            timeout: 10000,          //超过10秒后停止定位，默认：无穷大
             buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
             zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            buttonPosition: 'RB'
+            buttonPosition: 'RB',
+            maximumAge: 0,
+            convert: true
         });
         map.addControl(geolocation);
         geolocation.getCurrentPosition();
@@ -1500,13 +1558,6 @@ function searchCompanyList() {
     });
     //解析定位结果
     function onComplete(data) {
-        //str.push('经度：' + data.position.getLng());
-        //str.push('纬度：' + data.position.getLat());
-        //if (data.accuracy) {
-        //    str.push('精度：' + data.accuracy + ' 米');
-
-        //}//如为IP精确定位结果则没有精度信息
-        //str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
         $.ajax({
             data: {
                 position: data.position.getLat() + ',' + data.position.getLng(),
@@ -1806,6 +1857,8 @@ function ShowHeadLine() {
 }
 
 function ShowlineAddress() {
+   
+
     var map, geolocation;
     //加载地图，调用浏览器定位服务
     map = new AMap.Map('container', {
@@ -1843,7 +1896,8 @@ function ShowlineAddress() {
                                 if (areaid == userAddress[i].AreaId) {
                                     $('#hfUserAddressId').val(userAddress[i].Id);
                                     $('#address').val(userAddress[i].Address);
-                                    $('#address').attr('disabled', 'disabled');
+                                    alert($('#address').val());
+                                    //$('#address').attr('disabled', 'disabled');
                                     $('#phone').val(userAddress[i].Telphone);
                                     $('#nickname').val(userAddress[i].NickName);
                                     $('#TipAreaAddressTitle').text(userAddress[i].AreaTitle);

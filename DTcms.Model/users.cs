@@ -31,6 +31,7 @@ namespace DTcms.Model
         private int _is_lock = 0;
         private DateTime _reg_time = DateTime.Now;
         private string _reg_ip;
+        private decimal _account = 0M;
         /// <summary>
         /// 自增ID
         /// </summary>
@@ -200,6 +201,12 @@ namespace DTcms.Model
             get { return _reg_ip; }
         }
         public int company_id { get; set; }
+        
+        public decimal account
+        {
+            set { _account = value; }
+            get { return _account; }
+        }
         #endregion Model
     }
 }

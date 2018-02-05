@@ -127,7 +127,7 @@ namespace DTcms.Web.admin.orders
             Model.orders model = new BLL.orders().GetModel(_id);
             if (type == "2")
             {
-                if (model.payment_id == 3 || model.payment_id == 5 || model.payment_id == 6 )
+                if (model.payment_id == 3 || model.payment_id == 5 || model.payment_id == 6||model.payment_id==9 )
                 {
                     switch (model.status)
                     {
@@ -396,7 +396,7 @@ namespace DTcms.Web.admin.orders
             string gou = "";
             if(payment_status=="1")
             {
-                if(payment_id=="3" || payment_id == "5" || payment_id == "6")
+                if(payment_id=="3" || payment_id == "5" || payment_id == "6"|| payment_id == "9")
                 {
                     rtn = "<span style=\"color:red;cursor:pointer;\" onclick=\"QueryPayStatus('" + order_no + "')\">＝</span>";
                 }
@@ -414,6 +414,10 @@ namespace DTcms.Web.admin.orders
                 else if(payment_id=="8")
                 {
                     gou = "√√√";
+                }
+                else if (payment_id == "9")
+                {
+                    gou = "卡√";
                 }
                 else
                 {
