@@ -18,6 +18,9 @@ using TeeGonSdk.Response;
 using System.Web.Script.Serialization;
 using BookingFood.Model.Pay;
 using Orm.Son.Core;
+using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DTcms.Web.tools
 {
@@ -30,6 +33,7 @@ namespace DTcms.Web.tools
         Model.siteconfig siteConfig = new BLL.siteconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_SITE_XML_CONFING));
         Model.userconfig userConfig = new BLL.userconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_USER_XML_CONFING));
         private static TeeGonSdk.ITopClient Client = new TeeGonSdk.DefaultTopClient("https://api.teegon.com/", "bxkgovptblsbxe4zyi7ixbdh", "ot5rhjgescrhcewcex65uamkcypaaxfu");
+        const string KEY = "7d8ed28d4ece5addd313d27d53d91b75";
         public void ProcessRequest(HttpContext context)
         {
             //取得处事类型
@@ -4879,5 +4883,30 @@ namespace DTcms.Web.tools
         }
 
         #endregion
+
+        /// <summary>  
+        /// 国际标准GPS转换高德GPS  
+        /// </summary>  
+        /// <param name="lon">原始经度</param>  
+        /// <param name="lat">原始纬度</param>  
+        /// <returns>返回以逗号分割的经纬度组合字符串</returns>  
+        public static string WGS84ToGCJ02(double lon, double lat)
+        {
+            WebClient server = new WebClient();
+            string url = String.Format("http://restapi.amap.com/v3/assistant/coordinate/convert?locations={0},{1}&coordsys=gps&output=json&key={2}", lon, lat, KEY);
+            var replyBuffer = server.DownloadData(url);
+            var reply = System.Text.Encoding.UTF8.GetString(replyBuffer);
+            if (String.IsNullOrEmpty(reply))
+                return "";
+            JObject result = (JObject)JsonConvert.DeserializeObject(reply);
+            if (result["status"].Value<string>() == "1")
+            {
+                var locations = result["locations"];
+                var gps = locations.Value<string>();
+                return gps;
+            }
+            else
+                return "";
+        }
     }
 }

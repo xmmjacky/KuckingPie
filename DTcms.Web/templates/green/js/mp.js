@@ -1,7 +1,56 @@
 ﻿var isInArea = false;
 var isShowDeliver = true;
 var isShowConfirmByOnline = false;
+var lat = "";
+var lng = "";
 $(function () {
+    var map, geolocation;
+    //加载地图，调用浏览器定位服务
+    map = new AMap.Map('container', {
+        resizeEnable: true
+    });
+    map.plugin('AMap.Geolocation', function () {
+        geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true, //是否使用高精度定位，默认:true
+            timeout: 10000, //超过10秒后停止定位，默认：无穷大
+            maximumAge: 0, //定位结果缓存0毫秒，默认：0
+            convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+            showButton: true, //显示定位按钮，默认：true
+            buttonPosition: 'LB', //定位按钮停靠位置，默认：'LB'，左下角
+            buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+            showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+            panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
+            zoomToAccuracy: true //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+        });
+        // ios环境切换到使用远程https定位
+        if (AMap.UA.ios && document.location.protocol !== 'https:') {
+
+            //使用远程定位，见 remogeo.js
+            var remoGeo = new RemoGeoLocation();
+
+            //替换方法
+            navigator.geolocation.getCurrentPosition = function () {
+                return remoGeo.getCurrentPosition.apply(remoGeo, arguments);
+            };
+
+            //替换方法
+            navigator.geolocation.watchPosition = function () {
+                return remoGeo.watchPosition.apply(remoGeo, arguments);
+            };
+        }
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition();
+        AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+        AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
+    });
+    //解析定位结果
+    function onComplete(data) {
+        lat = data.position.getLat();
+        lng = data.position.getLng();
+    }
+    function onError(data) {
+    }
     $('.online .area_select li').on('click', function () {
         $('.online .area_select li').removeClass('active');
         $(this).addClass('active');
@@ -1537,30 +1586,11 @@ function showCarnivalOffline() {
 }
 
 function searchCompanyList() {
-    var map, geolocation;
-    //加载地图，调用浏览器定位服务
-    map = new AMap.Map('container', {
-        resizeEnable: true
-    });
-    map.plugin('AMap.Geolocation', function () {
-        geolocation = new AMap.Geolocation({
-            enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-            zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            buttonPosition: 'RB',
-            maximumAge: 0,
-            convert: true
-        });
-        map.addControl(geolocation);
-        geolocation.getCurrentPosition();
-        AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
-        AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
-    });
-    //解析定位结果
-    function onComplete(data) {
+    
+   if(lat!=""||lng!=""){
         $.ajax({
             data: {
-                position: data.position.getLat() + ',' + data.position.getLng(),
+                position: lat + ',' + lng,
                 openid: $('#hfOpenId').val()
             },
             success: function (data) {
@@ -1609,108 +1639,98 @@ function searchCompanyList() {
             timeout: 60000
         });
 
-    }
-    //解析定位错误信息
-    function onError(data) {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var coords = position.coords;
-                $.ajax({
-                    success: function (data_position) {
-                        $.ajax({
-                            data: {
-                                position: data_position.locations[0].lat + ',' + data_position.locations[0].lng,
-                                openid: $('#hfOpenId').val()
-                            },
-                            success: function (data) {
-                                if (!data) return;
-                                if (data.Status == 1) {
-                                    if (data.ShowConfirm == 1) {
-                                        $('#confirmTitle').text(data.Title);
-                                        $('#confirmAddress').text(data.Address);
-                                        $('#btnConfirmReturn').unbind('click');
-                                        $('#btnConfirmReturn').on('click', function () {
-                                            $('body').attr('style', 'background-color: #007c54;');
-                                            $('#divGoods').hide();
-                                            $('.bottom_nav').hide();
-                                            $('#divOfflineAreaError').show();
-                                            ShowDivConfirm();
-                                            $('#confirmAccept').insertBefore($('#btnConfirmReturn'));
-                                        });
-                                        ShowDivConfirm();
-                                        $('#btnConfirmReturn').insertBefore($('#confirmAccept'));
-                                    }
-                                    ShowOffline(data.Id, data.Title);
-                                } else {
-                                    //$('#divOfflineArea ul').empty();
-                                    //$('<li class="item">为保证口感，堂吃仅支持600米内提前下单，您可以至店附近下单，谢谢！</li>').appendTo($('#divOfflineArea ul'));
-                                    //$('#btnStartOfflineOrder').text('返回').css('line-height','40px');
-                                    //$('#btnStartOfflineOrder').addClass('other');
-                                    //$('#divOfflineArea').show();
+   } else {
+       if (navigator.geolocation) {
+           navigator.geolocation.getCurrentPosition(function (position) {
+               var coords = position.coords;
+               $.ajax({
+                   success: function (data_position) {
+                       $.ajax({
+                           data: {
+                               position: data_position.locations[0].lat + ',' + data_position.locations[0].lng,
+                               openid: $('#hfOpenId').val()
+                           },
+                           success: function (data) {
+                               if (!data) return;
+                               if (data.Status == 1) {
+                                   if (data.ShowConfirm == 1) {
+                                       $('#confirmTitle').text(data.Title);
+                                       $('#confirmAddress').text(data.Address);
+                                       $('#btnConfirmReturn').unbind('click');
+                                       $('#btnConfirmReturn').on('click', function () {
+                                           $('body').attr('style', 'background-color: #007c54;');
+                                           $('#divGoods').hide();
+                                           $('.bottom_nav').hide();
+                                           $('#divOfflineAreaError').show();
+                                           ShowDivConfirm();
+                                           $('#confirmAccept').insertBefore($('#btnConfirmReturn'));
+                                       });
+                                       ShowDivConfirm();
+                                       $('#btnConfirmReturn').insertBefore($('#confirmAccept'));
+                                   }
+                                   ShowOffline(data.Id, data.Title);
+                               } else {
+                                  
+                                   $('#divOfflineArea').hide();
+                                   if ($('#hfLastOfflineAreaId').val()) {
+                                       ShowOffline($('#hfLastOfflineAreaId').val(), $('#hfLastOfflineArea').val());
+                                       $('#confirmTitle').text($('#hfLastOfflineArea').val());
+                                       $('#confirmAddress').text($('#hflastOfflineAreaAddress').val());
+                                       $('#btnConfirmReturn').unbind('click');
+                                       $('#btnConfirmReturn').on('click', function () {
+                                           $('body').attr('style', 'background-color: #007c54;');
+                                           $('#divGoods').hide();
+                                           $('.bottom_nav').hide();
+                                           $('#divOfflineAreaError').show();
+                                           ShowDivConfirm();
+                                       });
+                                       ShowDivConfirm();
+                                   } else {
+                                       $('#divOfflineAreaError').show();
+                                   }
+                               }
+                           },
+                           url: '/tools/submit_ajax.ashx?action=get_polygon_contain_for_take',
+                           type: "post",
+                           dataType: "json",
+                           timeout: 60000
+                       });
+                   },
+                   url: 'http://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
+                   type: "get",
+                   dataType: "jsonp",
+                   timeout: 60000
+               });
 
-                                    //$('#divOfflineArea').hide();
-                                    //$('#divOfflineAreaError').show();
-                                    $('#divOfflineArea').hide();
-                                    if ($('#hfLastOfflineAreaId').val()) {
-                                        ShowOffline($('#hfLastOfflineAreaId').val(), $('#hfLastOfflineArea').val());
-                                        $('#confirmTitle').text($('#hfLastOfflineArea').val());
-                                        $('#confirmAddress').text($('#hflastOfflineAreaAddress').val());
-                                        $('#btnConfirmReturn').unbind('click');
-                                        $('#btnConfirmReturn').on('click', function () {
-                                            $('body').attr('style', 'background-color: #007c54;');
-                                            $('#divGoods').hide();
-                                            $('.bottom_nav').hide();
-                                            $('#divOfflineAreaError').show();
-                                            ShowDivConfirm();
-                                        });
-                                        ShowDivConfirm();
-                                    } else {
-                                        $('#divOfflineAreaError').show();
-                                    }
-                                }
-                            },
-                            url: '/tools/submit_ajax.ashx?action=get_polygon_contain_for_take',
-                            type: "post",
-                            dataType: "json",
-                            timeout: 60000
-                        });
-                    },
-                    url: 'http://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
-                    type: "get",
-                    dataType: "jsonp",
-                    timeout: 60000
-                });
+           }, function (error) {
+               $('#divOfflineArea').hide();
+               if ($('#hfLastOfflineAreaId').val()) {
+                   ShowOffline($('#hfLastOfflineAreaId').val(), $('#hfLastOfflineArea').val());
+                   $('#confirmTitle').text($('#hfLastOfflineArea').val());
+                   $('#confirmAddress').text($('#hflastOfflineAreaAddress').val());
+                   $('#btnConfirmReturn').unbind('click');
+                   $('#btnConfirmReturn').on('click', function () {
+                       $('body').attr('style', 'background-color: #007c54;');
+                       $('#divGoods').hide();
+                       $('.bottom_nav').hide();
+                       $('#divOfflineAreaError').show();
+                       ShowDivConfirm();
+                   });
+                   ShowDivConfirm();
+               } else {
+                   $('#divOfflineAreaError').show();
+               }
 
-            }, function (error) {
-                $('#divOfflineArea').hide();
-                if ($('#hfLastOfflineAreaId').val()) {
-                    ShowOffline($('#hfLastOfflineAreaId').val(), $('#hfLastOfflineArea').val());
-                    $('#confirmTitle').text($('#hfLastOfflineArea').val());
-                    $('#confirmAddress').text($('#hflastOfflineAreaAddress').val());
-                    $('#btnConfirmReturn').unbind('click');
-                    $('#btnConfirmReturn').on('click', function () {
-                        $('body').attr('style', 'background-color: #007c54;');
-                        $('#divGoods').hide();
-                        $('.bottom_nav').hide();
-                        $('#divOfflineAreaError').show();
-                        ShowDivConfirm();
-                    });
-                    ShowDivConfirm();
-                } else {
-                    $('#divOfflineAreaError').show();
-                }
-
-            }, {
-                // 指示浏览器获取高精度的位置，默认为false
-                enableHighAcuracy: true,
-                // 指定获取地理位置的超时时间，默认不限时，单位为毫秒
-                timeout: 3000,
-                // 最长有效期，在重复获取地理位置时，此参数指定多久再次获取位置。
-                maximumAge: 3000
-            });
-        }
-    }
-
+           }, {
+               // 指示浏览器获取高精度的位置，默认为false
+               enableHighAcuracy: true,
+               // 指定获取地理位置的超时时间，默认不限时，单位为毫秒
+               timeout: 3000,
+               // 最长有效期，在重复获取地理位置时，此参数指定多久再次获取位置。
+               maximumAge: 3000
+           });
+       }
+   }
 }
 
 function InsertOldAddress() {
@@ -1857,7 +1877,7 @@ function ShowHeadLine() {
 }
 
 function ShowlineAddress() {
-   
+
 
     var map, geolocation;
     //加载地图，调用浏览器定位服务
@@ -1885,42 +1905,42 @@ function ShowlineAddress() {
                 if (data.Status == 1) {
                     isInArea = true;
                     //if ($('#hfLastOnlineAreaId').val().length == 0) {
-                        //在区域内,没点过单直接显示配送站的提示
-                        var areaid = parseInt(data.Id);
-                        $('#hfAreaId').val(areaid);
-                        var userAddress = eval($('#hfUserAddress').val());
-                        $('#TipAreaAddressTitle').text($(this).data('areatitle'));
-                        $('#TipAreaAddressAddress').text($(this).data('areaaddress'));
-                        if ($('#hfUserAddress').val().length > 0) {
-                            for (var i = 0; i < userAddress.length; i++) {
-                                if (areaid == userAddress[i].AreaId) {
-                                    $('#hfUserAddressId').val(userAddress[i].Id);
-                                    $('#address').val(userAddress[i].Address);
-                                    alert($('#address').val());
-                                    //$('#address').attr('disabled', 'disabled');
-                                    $('#phone').val(userAddress[i].Telphone);
-                                    $('#nickname').val(userAddress[i].NickName);
-                                    $('#TipAreaAddressTitle').text(userAddress[i].AreaTitle);
-                                    $('#TipAreaAddressAddress').text(userAddress[i].AreaAddress);
-                                }
+                    //在区域内,没点过单直接显示配送站的提示
+                    var areaid = parseInt(data.Id);
+                    $('#hfAreaId').val(areaid);
+                    var userAddress = eval($('#hfUserAddress').val());
+                    $('#TipAreaAddressTitle').text($(this).data('areatitle'));
+                    $('#TipAreaAddressAddress').text($(this).data('areaaddress'));
+                    if ($('#hfUserAddress').val().length > 0) {
+                        for (var i = 0; i < userAddress.length; i++) {
+                            if (areaid == userAddress[i].AreaId) {
+                                $('#hfUserAddressId').val(userAddress[i].Id);
+                                $('#address').val(userAddress[i].Address);
+                                alert($('#address').val());
+                                //$('#address').attr('disabled', 'disabled');
+                                $('#phone').val(userAddress[i].Telphone);
+                                $('#nickname').val(userAddress[i].NickName);
+                                $('#TipAreaAddressTitle').text(userAddress[i].AreaTitle);
+                                $('#TipAreaAddressAddress').text(userAddress[i].AreaAddress);
                             }
                         }
-                        
-                        GetCarnivalOffline(areaid);//获取线下加价购商品信息
-                        //$('.button_order').text(data.Title);
-                        $('#hfDisamountId').val(data.Type);
-                        if (data.Type == 1) {
-                            $('.button_order').text('当前' + $('#hflowamount').val() + '元起送');
-                        } else {
-                            $('.button_order').text('当前' + $('#hflowamount_2').val() + '元起送');
-                        }
-                       
-                        ShowDivTipAreaAddress()
-                        setTimeout(function () {
-                            $('#divUserAddress').hide();
-                            $('#DivTipAreaAddress').hide();
-                            $('#btnStartOrder').trigger('click');
-                        }, 3000);
+                    }
+
+                    GetCarnivalOffline(areaid);//获取线下加价购商品信息
+                    //$('.button_order').text(data.Title);
+                    $('#hfDisamountId').val(data.Type);
+                    if (data.Type == 1) {
+                        $('.button_order').text('当前' + $('#hflowamount').val() + '元起送');
+                    } else {
+                        $('.button_order').text('当前' + $('#hflowamount_2').val() + '元起送');
+                    }
+
+                    ShowDivTipAreaAddress()
+                    setTimeout(function () {
+                        $('#divUserAddress').hide();
+                        $('#DivTipAreaAddress').hide();
+                        $('#btnStartOrder').trigger('click');
+                    }, 3000);
                     //} else {
                     //    $('#divUserAddress').show();
                     //    if ($('#hfUserAddress').val().length > 0 && $('#divUserAddress ul li').length == 0) {

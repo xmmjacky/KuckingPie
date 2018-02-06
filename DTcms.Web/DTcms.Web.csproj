@@ -710,6 +710,7 @@
     <Content Include="templates\green\grumble\js\jquery.grumble.min.js" />
     <Content Include="templates\green\js\bootstrap-typeahead.js" />
     <Content Include="templates\green\js\jquery-ui.min.js" />
+    <Content Include="templates\green\js\remogeo.js" />
     <Content Include="templates\green\mp_company.html" />
     <Content Include="templates\green\mp_show_company.html" />
     <Content Include="templates\green\mp_join_company.html" />
