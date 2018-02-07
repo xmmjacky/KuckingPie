@@ -11,6 +11,10 @@ namespace DTcms.Common
         public static bool GetResult(string point, string area)
         {
             //var result = false;
+            try
+            {
+
+           
             if (point.Split(',').Length != 2) return false;
             MyPoint position = new MyPoint();
             decimal x = 0, y = 0;
@@ -22,9 +26,23 @@ namespace DTcms.Common
             MyPoint[] poly = new MyPoint[areas.Length];
             for (int i = 0; i < areas.Length; i++)
             {
-                poly[i] = new MyPoint(decimal.Parse(areas[i].Split(',')[0]), decimal.Parse(areas[i].Split(',')[1]));
+                    try
+                    {
+                        poly[i] = new MyPoint(decimal.Parse(areas[i].Split(',')[0]), decimal.Parse(areas[i].Split(',')[1]));
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
             }
             return MyPointInFences(position, poly);
+            }
+            catch(Exception ex)
+            {
+                Log.Info("定位异常:" + ex.Message);
+                return false;
+            }
             //for (int i = 0; i < areas.Length; i++)
             //{
             //    result = GetDistance(Convert.ToDouble(x), Convert.ToDouble(y), Convert.ToDouble(areas[i].Split(',')[0]), Convert.ToDouble(areas[i].Split(',')[1])) <= 0.6;

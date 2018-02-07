@@ -4575,7 +4575,7 @@ namespace DTcms.Web.tools
             string rtn = "{\"Status\":0}";
             foreach (DataRow item in dtArea.Rows)
             {
-                if (string.IsNullOrEmpty(item["DistributionArea"].ToString())) continue;
+                if (string.IsNullOrEmpty(item["DistributionArea"].ToString().Trim())) continue;
                 bool isInArea = Polygon.GetResult(position, item["DistributionArea"].ToString());
                 if (isInArea)
                 {
@@ -4908,5 +4908,7 @@ namespace DTcms.Web.tools
             else
                 return "";
         }
+
+       
     }
 }

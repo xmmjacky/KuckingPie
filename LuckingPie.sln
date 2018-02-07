@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CMS", "CMS", "{A19E0C55-CBF3-471C-AA2E-6ECDE4A87363}"
 EndProject
@@ -48,6 +48,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeeGonSdk", "TeeGonSdk\TeeGonSdk.csproj", "{77CF8A3A-1126-4916-8589-83CC1193B5F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orm.Son", "C:\Users\xinmi\Downloads\Orm.Son-master\Orm.Son-master\Orm.Son\Orm.Son.csproj", "{018CF1A6-B5F9-44B2-BAF8-2306729CB6A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuckingPieTest", "LuckingPieTest\LuckingPieTest.csproj", "{163E2276-E50E-4397-B0B6-938BA1B28C1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,6 +133,10 @@ Global
 		{018CF1A6-B5F9-44B2-BAF8-2306729CB6A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{018CF1A6-B5F9-44B2-BAF8-2306729CB6A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{018CF1A6-B5F9-44B2-BAF8-2306729CB6A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{163E2276-E50E-4397-B0B6-938BA1B28C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{163E2276-E50E-4397-B0B6-938BA1B28C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{163E2276-E50E-4397-B0B6-938BA1B28C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{163E2276-E50E-4397-B0B6-938BA1B28C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +159,9 @@ Global
 		{CCD291E9-16FA-4B53-B032-EBD3F659567B} = {F76DAF42-6431-45E7-B367-4A14B1B54870}
 		{9C11CAE5-5188-4E71-825B-68FC3135728A} = {27656508-3B32-45FF-B182-0FE1F0780607}
 		{77CF8A3A-1126-4916-8589-83CC1193B5F9} = {27656508-3B32-45FF-B182-0FE1F0780607}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {276957C9-2587-4821-A343-3608E191A5AE}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
