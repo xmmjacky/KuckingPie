@@ -13,6 +13,8 @@ using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using System.Xml.Linq;
 using Aop.Api.Request;
+using BookingFood.Model;
+using Orm.Son.Core;
 
 namespace DTcms.Web.tools
 {
@@ -22,7 +24,7 @@ namespace DTcms.Web.tools
     public class api : IHttpHandler
     {
         private static TeeGonSdk.ITopClient Client = new TeeGonSdk.DefaultTopClient("https://api.teegon.com/", "bxkgovptblsbxe4zyi7ixbdh", "ot5rhjgescrhcewcex65uamkcypaaxfu");
-
+        private readonly string strcon = "ConnectionString";
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ContentType = "text/plain";
@@ -104,6 +106,9 @@ namespace DTcms.Web.tools
                     break;
                 case "checkofflinepaystate":
                     CheckOfflinePayState(context);
+                    break;
+                case "getTempuser":
+                    GetTempuser(context);
                     break;
             }
         }
@@ -1977,7 +1982,7 @@ namespace DTcms.Web.tools
                 + "and id in (SELECT baa.ArticleId FROM bf_area_article baa WHERE baa.[Type]='one' AND baa.AreaId=" + areaid + ")", " sort_id desc").Tables[0];
             //上下架集合
             List<BookingFood.Model.bf_area_article> listAreaArticle = new BookingFood.BLL.bf_area_article().GetModelList(" AreaId=" + areaid);
-            var  newcombos = new DownLoadNewCombo();
+            var newcombos = new DownLoadNewCombo();
             List<BookingFood.Model.bf_area_article> listAreaArticleOne = new BookingFood.BLL.bf_area_article().GetModelList(" Type='one' And AreaId=" + areaid);
             BookingFood.Model.bf_area_article temp = null;
 
@@ -2008,7 +2013,7 @@ namespace DTcms.Web.tools
                 combo.List = new List<DownLoadComboGood>();
                 List<BookingFood.Model.bf_good_combo_detail> listGoodComboDetail =
                 new BookingFood.BLL.bf_good_combo_detail().GetModelList(" GoodComboId=" + combo.Id.ToString() + " Order By SortId Asc");
-               
+
                 foreach (var itemGoodComboDetail in listGoodComboDetail)
                 {
                     DownLoadComboGood combodetail = new DownLoadComboGood();
@@ -2067,7 +2072,7 @@ namespace DTcms.Web.tools
                 //downloadgooddetail.condition_price = item["condition_price"].ToString();
                 downloadgooddetail.IsLock = islock;
                 downloadgooddetail.guqing = guqing;
-                downloadgooddetail.Taste = item["taste"].ToString()+ "," + (item["condition_price"].ToString().Replace("0.00", "").Replace("†", ""));
+                downloadgooddetail.Taste = item["taste"].ToString() + "," + (item["condition_price"].ToString().Replace("0.00", "").Replace("†", ""));
                 newcombos.goods.List.Add(downloadgooddetail);
             }
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -2434,6 +2439,25 @@ namespace DTcms.Web.tools
             context.Response.Write("err");
         }
 
+
+           #region 临时用户
+       private void GetTempuser(HttpContext context)
+        {
+            var tel = context.Request.Params["telphone"];
+            var TempuserDto = new dt_Temporaryuser();
+            if (!string.IsNullOrEmpty(tel))
+            {
+                using (var db = new SonConnection(strcon))
+                {
+                    TempuserDto = db.FindMany<dt_Temporaryuser>(o => o.Telphone == tel).ToList().FirstOrDefault();
+                }
+            }
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string ret = serializer.Serialize(TempuserDto);
+            context.Response.Write(ret);
+        }
+        #endregion
+
         public bool IsReusable
         {
             get
@@ -2450,6 +2474,7 @@ namespace DTcms.Web.tools
             return time;
         }
 
+       
     }
 
     #region 下载订单
