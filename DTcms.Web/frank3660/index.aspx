@@ -448,6 +448,8 @@
                 if (IsAdminLevel("orders", DTEnums.ActionEnum.View.ToString()))
             { %>
             <li><a href="javascript:f_addTab('xianxiadingdan','线下订单','orders/order_list.aspx?type=2')">线下订单</a></li>
+             <li><a href="javascript:f_addTab('chongzhiqueren','充值确认','vipUser/confirm_Charge_list.aspx')">充值确认</a></li>
+             <li><a href="javascript:f_addTab('xianxiadingdan','充值记录','vipUser/User_ChargeOrder_list.aspx')">充值记录</a></li>
             <%}
                 if (IsAdminLevel("caipinguanli", DTEnums.ActionEnum.View.ToString()))
             {%>

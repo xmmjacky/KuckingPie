@@ -43,7 +43,7 @@ namespace DTcms.Web.admin.orders
             this.txtEndTime.Text = this.endtime;
             this.page = DTRequest.GetQueryInt("page", 1);
             DTcms.BLL.orders bll = new BLL.orders();
-            totalamount = bll.GetSum(_strWhere + " and OrderType IN ('网页','转单(区域)','线下订单','电话','微信') and status in (1,2,3) AND (payment_id = 1 OR ((payment_id = 3 OR payment_id = 5 OR payment_id = 2 OR payment_id = 6) AND payment_status = 2 ))", "order_amount");
+            totalamount = bll.GetSum(_strWhere + " and OrderType IN ('网页','转单(区域)','线下订单','电话','微信') and status in (1,2,3) AND (payment_id = 1 OR ((payment_id = 3 OR payment_id = 5 OR payment_id = 2 OR payment_id = 6 OR payment_id = 9 OR payment_id = 10) AND payment_status = 2 ))", "order_amount");
 
             string sqlarea = string.Empty;
             if (!string.IsNullOrEmpty(Session["AreaId"].ToString()))

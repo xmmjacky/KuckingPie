@@ -127,7 +127,7 @@ namespace DTcms.Web.admin.orders
             Model.orders model = new BLL.orders().GetModel(_id);
             if (type == "2")
             {
-                if (model.payment_id == 3 || model.payment_id == 5 || model.payment_id == 6||model.payment_id==9 )
+                if (model.payment_id == 3 || model.payment_id == 5 || model.payment_id == 6)
                 {
                     switch (model.status)
                     {
@@ -160,7 +160,7 @@ namespace DTcms.Web.admin.orders
                             break;
                     }
                 }
-                else if(model.payment_id==1 || model.payment_id == 7 || model.payment_id == 8)
+                else if(model.payment_id==1 || model.payment_id == 7 || model.payment_id == 8 || model.payment_id == 9 || model.payment_id == 10)
                 {
                     if(model.status==4)
                     {
@@ -396,7 +396,7 @@ namespace DTcms.Web.admin.orders
             string gou = "";
             if(payment_status=="1")
             {
-                if(payment_id=="3" || payment_id == "5" || payment_id == "6"|| payment_id == "9")
+                if(payment_id=="3" || payment_id == "5" || payment_id == "6"|| payment_id == "9" || payment_id == "10")
                 {
                     rtn = "<span style=\"color:red;cursor:pointer;\" onclick=\"QueryPayStatus('" + order_no + "')\">＝</span>";
                 }
@@ -418,6 +418,10 @@ namespace DTcms.Web.admin.orders
                 else if (payment_id == "9")
                 {
                     gou = "卡√";
+                }
+                else if (payment_id == "10")
+                {
+                    gou = "卡1√";
                 }
                 else
                 {

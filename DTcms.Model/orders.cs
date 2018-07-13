@@ -295,6 +295,8 @@ namespace DTcms.Model
         public decimal voucher_total { get; set; }
         public int area_type { get; set; }
         public int user_address_id { get; set; }
+
+        public int officelinetype { get; set; }
         #endregion Model
 
         private List<order_goods> _order_goods;

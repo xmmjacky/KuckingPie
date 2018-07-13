@@ -9,7 +9,7 @@
     <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
     <script src="{config.templateskin}/js/jquery-ui.min.js" type="text/javascript"></script>
     <link media="screen" type="text/css" href="{config.templateskin}/css/jquery-ui.min.css" rel="stylesheet">
-    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
     <style>
         html, body {
             height: 100%;
@@ -134,7 +134,7 @@
                 source: function (request, response) {
                     isInArea = false;
                     $.ajax({
-                        url: "http://apis.map.qq.com/ws/place/v1/suggestion/?region=%E4%B8%8A%E6%B5%B7&output=jsonp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&region_fix=1",
+                        url: "https://apis.map.qq.com/ws/place/v1/suggestion/?region=%E4%B8%8A%E6%B5%B7&output=jsonp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&region_fix=1",
                         dataType: "jsonp",
                         data: {
                             keyword: request.term

@@ -19,7 +19,7 @@ namespace Aop.Api.Request
 		private string terminalType;
 		private string terminalInfo;
         private string prodCode;
-		private string notifyUrl;
+		private string notifyUrl= "https://www.4008317417.cn/api/payment/alipay/notify_url.aspx";
 
 		public void SetNotifyUrl(string notifyUrl){
             this.notifyUrl = notifyUrl;

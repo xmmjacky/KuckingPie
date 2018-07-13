@@ -26,7 +26,7 @@ namespace DTcms.Web.UI.Page
         protected void payment_Init(object sender, EventArgs e)
         {
 
-            url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_slave_appid + "&redirect_uri=http%3A%2F%2Fwww.4008317417.cn%2fmp_index.aspx&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect";
+            url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_slave_appid + "&redirect_uri=https%3A%2F%2Fwww.4008317417.cn%2fmp_index.aspx&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect";
             action = DTRequest.GetQueryString("metadata");
             action = Common.Utils.UrlDecode(action);
             JObject jsonObj = JObject.Parse(action);

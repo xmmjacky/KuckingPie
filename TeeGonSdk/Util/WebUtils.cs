@@ -66,17 +66,27 @@ namespace TeeGonSdk.Util
         /// <returns>HTTP响应</returns>
         public string DoPost(string url, IDictionary<string, string> textParams, IDictionary<string, string> headerParams)
         {
-            HttpWebRequest req = GetWebRequest(url, "POST", headerParams);
-            req.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
+            try
+            {
+                DTcms.Common.Log.Info("天工请求参数1" + url + textParams.Count + headerParams.Count);
+                HttpWebRequest req = GetWebRequest(url, "POST", headerParams);
+                req.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
 
-            byte[] postData = Encoding.UTF8.GetBytes(BuildQuery(textParams));
-            System.IO.Stream reqStream = req.GetRequestStream();
-            reqStream.Write(postData, 0, postData.Length);
-            reqStream.Close();
+                byte[] postData = Encoding.UTF8.GetBytes(BuildQuery(textParams));
+                DTcms.Common.Log.Info("天工请求参数2" + url + textParams.Count + headerParams.Count);
+                System.IO.Stream reqStream = req.GetRequestStream();
+                reqStream.Write(postData, 0, postData.Length);
+                reqStream.Close();
 
-            HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
-            Encoding encoding = GetResponseEncoding(rsp);
-            return GetResponseAsString(rsp, encoding);
+                HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
+                Encoding encoding = GetResponseEncoding(rsp);
+                return GetResponseAsString(rsp, encoding);
+            }
+            catch (Exception e) {
+                DTcms.Common.Log.Info("天工请求异常" + e.ToString());
+                return "";
+            }
+           
         }
 
         /// <summary>
@@ -99,17 +109,24 @@ namespace TeeGonSdk.Util
         /// <returns>HTTP响应</returns>
         public string DoGet(string url, IDictionary<string, string> textParams, IDictionary<string, string> headerParams)
         {
-            if (textParams != null && textParams.Count > 0)
-            {
-                url = BuildRequestUrl(url, textParams);
+            try {
+                if (textParams != null && textParams.Count > 0)
+                {
+                    url = BuildRequestUrl(url, textParams);
+                }
+
+                HttpWebRequest req = GetWebRequest(url, "GET", headerParams);
+                req.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
+
+                HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
+                Encoding encoding = GetResponseEncoding(rsp);
+                return GetResponseAsString(rsp, encoding);
+
             }
-
-            HttpWebRequest req = GetWebRequest(url, "GET", headerParams);
-            req.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
-
-            HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
-            Encoding encoding = GetResponseEncoding(rsp);
-            return GetResponseAsString(rsp, encoding);
+            catch (Exception ex) {
+                return "";
+            }
+            
         }
 
         /// <summary>

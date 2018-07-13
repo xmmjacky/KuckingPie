@@ -2,12 +2,16 @@
 using DTcms.BLL;
 using DTcms.Common;
 using DTcms.Web.tools;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+using TeeGonSdk.Util;
 
 namespace LuckingPieTest
 {
@@ -15,7 +19,12 @@ namespace LuckingPieTest
     {
         static void Main(string[] args)
         {
-            Test();
+            //Test();
+            //xmlf();
+
+           // var body= @"{"result":{"charge_id":"1017815794471411712","domain_id":"5678f022","order_no":"JH153149843102","amount":1,"channel":"alipay_ws","subject":"Luckingpie馍王微信订单","device_id":"iZ236ejklutZ","paid":false,"created":1531501170,"refund":false,"transaction_no":"","action":{"type":"js","url":"https://api.teegon.com/app/checkout/alipaysign?id=1017815794471411712\u0026channel=alipay_ws\u0026t=1531501170","params":"var img = window.document.createElement(\"img\");\n\t\t\timg.src = \"https://qr.teegon.com/qr/get_qrcode?url=https%3A%2F%2Fapi.teegon.com%2Fapp%2Fcheckout%2Falipaysign%3Fid%3D1017815794471411712%26channel%3Dalipay_ws%26t%3D1531501170\";\n\t\t\tdocument.getElementById('native').appendChild(img);"}}}";
+            var a = new A();
+            a.TianGong();
         }
 
 
@@ -71,5 +80,19 @@ namespace LuckingPieTest
 
             }
         
+        static void xmlf()
+        {
+            var data = "{\"alipay_trade_precreate_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"out_trade_no\":\"HA152812825639\",\"qr_code\":\"https:\\/\\/ qr.alipay.com\\/ bax03771cve7qfxo4wsv6098\"},\"sign\":\"l0PbHeWI0chlThfU7QgkrS1uzNT7mqte / GJ / acBhAsIkqlfslQTnhEzWD7HOWKFXgvS0y1avTBG8lDq5lOzVAofRzLszLutwc4t5jnLrXnYu1fWWkTuC4Iz5IZEPx / +aTmK77gOqSvZdDPRYa2YHv5jFgomTk9t3yTsTq9qzmn0 = \"}";
+            //XmlDocument doc = new XmlDocument();
+            //doc.LoadXml(data.Trim());
+            //var res = XDocument.Parse(data);
+            AliPayDto AliPay = new AliPayDto();
+            var res = JsonConvert.DeserializeObject<AliPayDto>(data.Trim());
+            
+        }
+
+
+       
+
     }
 }

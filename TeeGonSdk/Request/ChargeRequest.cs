@@ -26,6 +26,7 @@ namespace TeeGonSdk.Request
         public string pay_channel { get; set; }
         public string channel { get; set; }
 
+        public string barcodepay { get; set; }
         /// <summary>
         /// 支付ip
         /// </summary>
@@ -106,7 +107,8 @@ namespace TeeGonSdk.Request
             parameters.Add("amount", this.amount);
             parameters.Add("out_order_no", this.out_order_no);
             parameters.Add("pay_channel", this.pay_channel);
-            parameters.Add("channel", this.channel);
+            //parameters.Add("channel", this.channel);
+            parameters.Add("barcodepay", this.barcodepay);
             parameters.Add("ip", this.ip);
             parameters.Add("subject", this.subject);
             if (!string.IsNullOrWhiteSpace(return_url))

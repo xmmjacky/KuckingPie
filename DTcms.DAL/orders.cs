@@ -54,9 +54,9 @@ namespace DTcms.DAL
 		{
 			StringBuilder strSql=new StringBuilder();
             strSql.Append("insert into dt_orders(");
-            strSql.Append("order_no,user_id,user_name,payment_id,distribution_id,status,payment_status,distribution_status,delivery_name,delivery_no,accept_name,post_code,telphone,mobile,address,message,payable_amount,real_amount,payable_freight,real_freight,payment_fee,order_amount,point,add_time,payment_time,confirm_time,distribution_time,complete_time,area_id,area_title,email,OrderType,worker_id,worker_name,restore_status,MpForHere,takeout,is_additional,additional_count,is_quick,is_less,is_download,which_mp,additional_id,before_change_area_id,IsCountFreeAvaliable,voucher_total,area_type,user_address_id)");
+            strSql.Append("order_no,user_id,user_name,payment_id,distribution_id,status,payment_status,distribution_status,delivery_name,delivery_no,accept_name,post_code,telphone,mobile,address,message,payable_amount,real_amount,payable_freight,real_freight,payment_fee,order_amount,point,add_time,payment_time,confirm_time,distribution_time,complete_time,area_id,area_title,email,OrderType,worker_id,worker_name,restore_status,MpForHere,takeout,is_additional,additional_count,is_quick,is_less,is_download,which_mp,additional_id,before_change_area_id,IsCountFreeAvaliable,voucher_total,area_type,user_address_id,officelinetype)");
             strSql.Append(" values (");
-            strSql.Append("@order_no,@user_id,@user_name,@payment_id,@distribution_id,@status,@payment_status,@distribution_status,@delivery_name,@delivery_no,@accept_name,@post_code,@telphone,@mobile,@address,@message,@payable_amount,@real_amount,@payable_freight,@real_freight,@payment_fee,@order_amount,@point,@add_time,@payment_time,@confirm_time,@distribution_time,@complete_time,@area_id,@area_title,@email,@OrderType,@worker_id,@worker_name,@restore_status,@MpForHere,@takeout,@is_additional,@additional_count,@is_quick,@is_less,@is_download,@which_mp,@additional_id,@before_change_area_id,@IsCountFreeAvaliable,@voucher_total,@area_type,@user_address_id)");
+            strSql.Append("@order_no,@user_id,@user_name,@payment_id,@distribution_id,@status,@payment_status,@distribution_status,@delivery_name,@delivery_no,@accept_name,@post_code,@telphone,@mobile,@address,@message,@payable_amount,@real_amount,@payable_freight,@real_freight,@payment_fee,@order_amount,@point,@add_time,@payment_time,@confirm_time,@distribution_time,@complete_time,@area_id,@area_title,@email,@OrderType,@worker_id,@worker_name,@restore_status,@MpForHere,@takeout,@is_additional,@additional_count,@is_quick,@is_less,@is_download,@which_mp,@additional_id,@before_change_area_id,@IsCountFreeAvaliable,@voucher_total,@area_type,@user_address_id,@officelinetype)");
 			strSql.Append(";set @ReturnValue= @@IDENTITY");
 			SqlParameter[] parameters = {
 					new SqlParameter("@order_no", SqlDbType.NVarChar,100),
@@ -108,6 +108,7 @@ namespace DTcms.DAL
                     new SqlParameter("@voucher_total", SqlDbType.Decimal,5),
                     new SqlParameter("@area_type", SqlDbType.Int),
                     new SqlParameter("@user_address_id", SqlDbType.Int),
+                    new SqlParameter("@officelinetype", SqlDbType.Int),
                     new SqlParameter("@ReturnValue",SqlDbType.Int)};
             parameters[0].Value = model.order_no;
             parameters[1].Value = model.user_id;
@@ -158,7 +159,8 @@ namespace DTcms.DAL
             parameters[46].Value = model.voucher_total;
             parameters[47].Value = model.area_type;
             parameters[48].Value = model.user_address_id;
-            parameters[49].Direction = ParameterDirection.Output;
+            parameters[49].Value = model.officelinetype;
+            parameters[50].Direction = ParameterDirection.Output;
 
 			List<CommandInfo> sqllist = new List<CommandInfo>();
 			CommandInfo cmd = new CommandInfo(strSql.ToString(), parameters);
@@ -204,7 +206,7 @@ namespace DTcms.DAL
                 }
             }
 			DbHelperSQL.ExecuteSqlTranWithIndentity(sqllist);
-            return (int)parameters[49].Value;
+            return (int)parameters[50].Value;
 		}
 
         /// <summary>
@@ -215,6 +217,7 @@ namespace DTcms.DAL
             StringBuilder strSql = new StringBuilder();
             strSql.Append("update dt_orders set " + strValue);
             strSql.Append(" where id=" + id);
+            Log.Info("更新订单信息========>" + strSql.ToString());
             DbHelperSQL.ExecuteSql(strSql.ToString());
         }
 
@@ -754,6 +757,10 @@ namespace DTcms.DAL
                 {
                     model.user_address_id = int.Parse(ds.Tables[0].Rows[0]["user_address_id"].ToString());
                 }
+                if (ds.Tables[0].Rows[0]["officelinetype"] != null && ds.Tables[0].Rows[0]["officelinetype"].ToString() != "")
+                {
+                    model.officelinetype = int.Parse(ds.Tables[0].Rows[0]["officelinetype"].ToString());
+                }
                 #endregion  父表信息end
 
                 #region  子表信息
@@ -941,7 +948,7 @@ namespace DTcms.DAL
             strSql.Append("SELECT CONVERT(VARCHAR(10),do.add_time,102) AS addtime ");
             strSql.Append(",SUM(do.order_amount) AS orderamount ");
             strSql.Append("FROM dt_orders do ");
-            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','线下订单','电话','微信')  and do.status in (1,2,3) and (payment_id=1 or ((payment_id in (2,3,5,6,7,8)) and payment_status=2))");
+            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','线下订单','电话','微信')  and do.status in (1,2,3) and (payment_id=1 or ((payment_id in (2,3,5,6,7,8,9,10)) and payment_status=2))");
             strSql.Append("GROUP BY CONVERT(VARCHAR(10),do.add_time,102) ");
             strSql.Append(") AS temp4 ");
             strSql.Append("LEFT JOIN  ");
@@ -957,7 +964,7 @@ namespace DTcms.DAL
             strSql.Append("SELECT ba.Title+'_On',CONVERT(VARCHAR(10),do.add_time,102) AS addtime ");
             strSql.Append(",SUM(do.order_amount) AS orderamount ");
             strSql.Append("FROM dt_orders do,bf_area ba ");
-            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','线下订单','电话','微信') and do.Status in(1,2,3) and ((payment_id in (2,3,5,6,7,8)) and payment_status=2)");
+            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','线下订单','电话','微信') and do.Status in(1,2,3) and ((payment_id in (2,3,5,6,7,8,9,10)) and payment_status=2)");
             strSql.Append("AND do.area_id=ba.Id ");
             strSql.Append("GROUP BY ba.Title,CONVERT(VARCHAR(10),do.add_time,102) ");
             strSql.Append(") AS tmep ");
@@ -970,7 +977,7 @@ namespace DTcms.DAL
             strSql.Append("SELECT CONVERT(VARCHAR(10),do.add_time,102) AS addtime ");
             strSql.Append(",SUM(do.order_amount) AS orderamount ");
             strSql.Append("FROM dt_orders do ");
-            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','电话','微信') and do.status in (1,2,3) and ((payment_id=1 or payment_id=2) or ((payment_id in (3,5,6,7,8)) and payment_status=2))");
+            strSql.Append("WHERE " + strWhere + " and do.OrderType IN ('网页','转单(区域)','电话','微信') and do.status in (1,2,3) and ((payment_id=1 or payment_id=2) or ((payment_id in (3,5,6,7,8,9,10)) and payment_status=2))");
             strSql.Append("GROUP BY CONVERT(VARCHAR(10),do.add_time,102) ");
             strSql.Append(") AS temp2 ");
             strSql.Append("ON temp4.addtime=temp2.addtime ");
@@ -978,7 +985,7 @@ namespace DTcms.DAL
             strSql.Append("SELECT CONVERT(VARCHAR(10),do.add_time,102) AS addtime ");
             strSql.Append(",SUM(do.order_amount) AS orderamount ");
             strSql.Append("FROM dt_orders do ");
-            strSql.Append("WHERE " + strWhere + " and do.OrderType = '线下订单' and do.status in (1,2,3)  and ((payment_id=1 or payment_id=2) or ((payment_id in (3,5,6,7,8)) and payment_status=2))");
+            strSql.Append("WHERE " + strWhere + " and do.OrderType = '线下订单' and do.status in (1,2,3)  and ((payment_id=1 or payment_id=2) or ((payment_id in (3,5,6,7,8,9,10)) and payment_status=2))");
             //strSql.Append("WHERE " + strWhere + " and do.OrderType = '线下订单' and do.status in (1,2,3)  and (payment_id in( 1,2,3,5,6,7,8)) and payment_status=2))");
             strSql.Append("GROUP BY CONVERT(VARCHAR(10),do.add_time,102) ");
             strSql.Append(") AS temp3 ");

@@ -813,7 +813,7 @@ $(function () {
         source: function (request, response) {
             isInArea = false;
             $.ajax({
-                url: "http://apis.map.qq.com/ws/place/v1/suggestion/?region=%E4%B8%8A%E6%B5%B7&output=jsonp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&region_fix=1",
+                url: "https://apis.map.qq.com/ws/place/v1/suggestion/?region=%E4%B8%8A%E6%B5%B7&output=jsonp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&region_fix=1",
                 dataType: "jsonp",
                 data: {
                     keyword: request.term
@@ -1140,9 +1140,9 @@ function calcTotal() {
     }
     if (totalmoney < parseFloat($('#hffreedisamount').val()) && totalmoney > 0 && $('#hfClass').val() == '0' && $('#hfAdditional').val() == '0') totalmoney += parseFloat($('#hfdisamount').val());
     //判断外卖满99减5元 堂吃满39减2元
-    if ($('#divVipOnline').length && $('#hfClass').val() == '0' && totalmoney >= 99 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 5) {
-        totalmoney = totalmoney - 5;
-    } else if ($('#divVipOffline').length && $('#hfClass').val() == '1' && totalmoney >= 39 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 2) {
+    if ($('#divVipOnline').length && $('#hfClass').val() == '0' && totalmoney >= 9900 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 7) {
+        totalmoney = totalmoney - 7;
+    } else if ($('#divVipOffline').length && $('#hfClass').val() == '1' && totalmoney >= 10000 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 2) {
         totalmoney = totalmoney - 2;
     }
     $('#spanCount').html(totalmoney.toString().replace('.00', ''));
@@ -1223,7 +1223,7 @@ function showCart() {
         rtn += '<div class="line"><span class="name" style="width: 190px;">订单不满' + $('#hffreedisamount').val() + '元加' + $('#hfdisamount').val() + '元配送费</span><span class="price">￥' + $('#hfdisamount').val() + '元</span></div>';
     }
     //判断外卖满99减5元 堂吃满39减2元
-    if ($('#divVipOnline').length && $('#hfClass').val() == '0' && totalmoney >= 99 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 5) {
+    if ($('#divVipOnline').length && $('#hfClass').val() == '0' && totalmoney >= 9999 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 5) {
         $('#divCartOnline .b_pay_offline').text('餐到付款');
         $('#divCartOnline .b_pay_mppay').text('VIP微信支付');
         totalmoney = totalmoney - 5;
@@ -1231,7 +1231,7 @@ function showCart() {
         $('#divCartOnline .b_pay_offline').text('餐到付款');
         $('#divCartOnline .b_pay_mppay').text('微信支付');
     }
-    if ($('#divVipOffline').length && $('#hfClass').val() == '1' && totalmoney >= 39 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 2) {
+    if ($('#divVipOffline').length && $('#hfClass').val() == '1' && totalmoney >= 9999 && parseInt($('#hfAvaliableCompanyAmount').val()) >= 2) {
         totalmoney = totalmoney - 2;
         $('#btnOfflineSubmit').text('VIP微信支付');
     } else {
@@ -1355,6 +1355,7 @@ function addGoods(obj) {
 }
 
 function submitOrder(paymentid, takeout, remark) {
+   
     if (!$('#hfCookie').val()) return;
     var patrn = /^1[3-9]\d{9}$/;
     var phone = $('#phone').val();
@@ -1502,12 +1503,25 @@ function submitOrder(paymentid, takeout, remark) {
                     if (data.carnivalnums) {
                         $('#divCarnivalOnline .num').html(data.carnivalnums);
                     }
-                    $('.order_complete_window.success').show();
+                    $('#lblForHere').text(data.forhere);
+                    if (takeout == 0) {
+                        $('.order_complete_window.success').show();
+                    } else if (takeout == 1) {
+                        $('.order_complete_window.success_forhere').show();
+                    } else {
+                        $('.order_complete_window.success_forhere').show();
+                    }
                     setTimeout(function () {
                         if ($('#hfAdditional').val().length) {
                             location.href = '/mp_index.aspx?openid=' + $('#hfOpenId').val();
                         }
-                        $('.order_complete_window.success').hide();
+                        if (takeout == 0) {
+                            $('.order_complete_window.success').hide();
+                        } else if(takeout==1) {
+                            $('.order_complete_window.success_forhere').hide();
+                        } else {
+                            $('.order_complete_window.success_forhere').hide();
+                        }
                         if ($('#hfClass').val() == '0') {
                             $('.b_continue').trigger('click');
                         } else if ($('#hfClass').val() == '1') {
@@ -1696,7 +1710,7 @@ function searchCompanyList() {
                            timeout: 60000
                        });
                    },
-                   url: 'http://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
+                   url: 'https://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
                    type: "get",
                    dataType: "jsonp",
                    timeout: 60000
@@ -1914,9 +1928,10 @@ function ShowlineAddress() {
                     if ($('#hfUserAddress').val().length > 0) {
                         for (var i = 0; i < userAddress.length; i++) {
                             if (areaid == userAddress[i].AreaId) {
+                                console.log(JSON.stringify(userAddress[i]));
                                 $('#hfUserAddressId').val(userAddress[i].Id);
                                 $('#address').val(userAddress[i].Address);
-                                alert($('#address').val());
+                                //alert($('#address').val());
                                 //$('#address').attr('disabled', 'disabled');
                                 $('#phone').val(userAddress[i].Telphone);
                                 $('#nickname').val(userAddress[i].NickName);
@@ -2096,7 +2111,7 @@ function ShowlineAddress() {
                         $('#txtInputAddres').val('');
                         $('#divInputAddress').show();
                     },
-                    url: 'http://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
+                    url: 'https://apis.map.qq.com/ws/coord/v1/translate?locations=' + coords.latitude + ',' + coords.longitude + '&type=1&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&output=jsonp',
                     type: "get",
                     dataType: "jsonp",
                     timeout: 60000

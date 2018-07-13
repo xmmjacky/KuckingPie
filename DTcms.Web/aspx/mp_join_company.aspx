@@ -30,8 +30,8 @@ override protected void OnInit(EventArgs e)
 	templateBuilder.Append("/js/jquery-ui.min.js\" type=\"text/javascript\"></");
 	templateBuilder.Append("script>\r\n    <link media=\"screen\" type=\"text/css\" href=\"");
 	templateBuilder.Append(Utils.ObjectToStr(config.templateskin));
-	templateBuilder.Append("/css/jquery-ui.min.css\" rel=\"stylesheet\">\r\n    <script charset=\"utf-8\" src=\"http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z\"></");
-	templateBuilder.Append("script>\r\n    <script type=\"text/javascript\" src=\"http://res.wx.qq.com/open/js/jweixin-1.0.0.js\"></");
+	templateBuilder.Append("/css/jquery-ui.min.css\" rel=\"stylesheet\">\r\n    <script charset=\"utf-8\" src=\"https://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z\"></");
+	templateBuilder.Append("script>\r\n    <script type=\"text/javascript\" src=\"https://res.wx.qq.com/open/js/jweixin-1.0.0.js\"></");
 	templateBuilder.Append("script>\r\n    <script type=\"text/javascript\">\r\n        wx.config({\r\n            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。\r\n            appId: '");
 	templateBuilder.Append(Utils.ObjectToStr(config.mp_slave_appid));
 	templateBuilder.Append("', // 必填，公众号的唯一标识\r\n            timestamp: ");
@@ -44,9 +44,9 @@ override protected void OnInit(EventArgs e)
 	if (modelCompay!=null)
 	{
 
-	templateBuilder.Append("\r\n            var wxShareTitle = '分享VIP码';\r\n            var wxShareDesc = '每扫码增加一位,余额增加2元';\r\n            var wxShareImage = 'http://4008317417.cn/company_qr/");
+	templateBuilder.Append("\r\n            var wxShareTitle = '分享VIP码';\r\n            var wxShareDesc = '每扫码增加一位,余额增加2元';\r\n            var wxShareImage = 'https://4008317417.cn/company_qr/");
 	templateBuilder.Append(Utils.ObjectToStr(modelCompay.Id));
-	templateBuilder.Append(".jpg';\r\n            var wxShareUrl = 'http://4008317417.cn/mp_show_company.aspx?companyid=");
+	templateBuilder.Append(".jpg';\r\n            var wxShareUrl = 'https://4008317417.cn/mp_show_company.aspx?companyid=");
 	templateBuilder.Append(Utils.ObjectToStr(modelCompay.Id));
 	templateBuilder.Append("';\r\n            wx.onMenuShareTimeline({\r\n                title: wxShareTitle, // 分享标题\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareAppMessage({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                type: 'link', // 分享类型,music、video或link，不填默认为link\r\n                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareQQ({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareWeibo({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            wx.onMenuShareQZone({\r\n                title: wxShareTitle, // 分享标题\r\n                desc: wxShareDesc, // 分享描述\r\n                link: wxShareUrl, // 分享链接\r\n                imgUrl: wxShareImage, // 分享图标\r\n                success: function () {\r\n                    // 用户确认分享后执行的回调函数\r\n                },\r\n                cancel: function () {\r\n                    // 用户取消分享后执行的回调函数\r\n                }\r\n            });\r\n            ");
 	}	//end if

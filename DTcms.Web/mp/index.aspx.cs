@@ -43,6 +43,7 @@ namespace DTcms.Web.mp
 
                 //post method - 当有用户想公众账号发送消息时触发
                 DTcms.Model.siteconfig config = new DTcms.BLL.siteconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_SITE_XML_CONFING));
+                Log.Info("微信推送消息菜单链接:" + config.mp_menu);
                 var postModel = new PostModel()
                 {
                     Signature = Request.QueryString["signature"],

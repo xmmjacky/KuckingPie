@@ -129,12 +129,12 @@ namespace DTcms.Web.UI
                 switch (state)
                 {
                     case "master":
-                        Log.Info("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_appid + "&redirect_uri=http%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_base&state=" + state + "#wechat_redirect");
-                        Response.Redirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+config.mp_appid+"&redirect_uri=http%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect");
+                        Log.Info("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_appid + "&redirect_uri=https%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_base&state=" + state + "#wechat_redirect");
+                        Response.Redirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+config.mp_appid+"&redirect_uri=https%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect");
                         break;
                     case "slave":
-                        Log.Info("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_slave_appid + "&redirect_uri=http%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_base&state=" + state + "#wechat_redirect");
-                        Response.Redirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+config.mp_slave_appid+"&redirect_uri=http%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect");
+                        Log.Info("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + config.mp_slave_appid + "&redirect_uri=https%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_base&state=" + state + "#wechat_redirect");
+                        Response.Redirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+config.mp_slave_appid+"&redirect_uri=https%3A%2F%2Fwww.4008317417.cn" + url + "&response_type=code&scope=snsapi_userinfo&state=" + state + "#wechat_redirect");
                         break;
                 }
                 return;

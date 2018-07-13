@@ -95,7 +95,7 @@ namespace DTcms.Web.api.payment.alipay
 
 
             //支付宝网关地址
-            string GATEWAY_NEW = "http://wappaygw.alipay.com/service/rest.htm?";
+            string GATEWAY_NEW = "https://wappaygw.alipay.com/service/rest.htm?";
 
             ////////////////////////////////////////////调用授权接口alipay.wap.trade.create.direct获取授权码token////////////////////////////////////////////
 

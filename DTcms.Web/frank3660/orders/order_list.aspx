@@ -343,7 +343,7 @@
                 <%=areafilter%>
             </div>
         </th>
-        <th width="4%">支付<a href="#" class="icon_expand"></a></th>
+        <th width="3%">支付<a href="#" class="icon_expand"></a></th>
         <th width="6%">订单状态<a href="#" class="icon_expand"></a></th>
         <th width="12%" align="left">下单时间<a href="#" class="icon_expand"></a></th>
         <th width="8%">管理</th>

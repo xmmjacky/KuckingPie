@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Aop.Api.Request;
 using BookingFood.Model;
 using Orm.Son.Core;
+using Newtonsoft.Json;
 
 namespace DTcms.Web.tools
 {
@@ -125,7 +126,7 @@ namespace DTcms.Web.tools
 
             //DTcms.Common.Log.Info("downloadlist:areaids_" + dtUser.Rows[0]["orderarea"].ToString());
             DTcms.BLL.orders bllOrder = new BLL.orders();
-            DataTable dtOrder = bllOrder.GetList(30, " ((status=1 and (payment_id=1 or payment_id=2) and payment_status in (1,2)) or (status=1 and (payment_id in (3,5,6,7,8)) and payment_status=2)) and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
+            DataTable dtOrder = bllOrder.GetList(30, " ((status=1 and (payment_id=1 or payment_id=2) and payment_status in (1,2)) or (status=1 and (payment_id in (3,5,6,7,8,9,10)) and payment_status=2)) and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
             string ret = string.Empty;
             DTcms.Model.orders order = null;
             string orderdetail = string.Empty;
@@ -202,7 +203,7 @@ namespace DTcms.Web.tools
 
             //DTcms.Common.Log.Info("downloadlist2:areaids_" + dtUser.Rows[0]["orderarea"].ToString());
             DTcms.BLL.orders bllOrder = new BLL.orders();
-            DataTable dtOrder = bllOrder.GetList(30, " ((status=1 and (payment_id=1 or payment_id=2) and payment_status in (1,2)) or (status=1 and (payment_id in (3,5,6,7,8)) and payment_status=2)) and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
+            DataTable dtOrder = bllOrder.GetList(30, " ((status=1 and (payment_id=1 or payment_id=2) and payment_status in (1,2)) or (status=1 and (payment_id in (3,5,6,7,8,9,10)) and payment_status=2)) and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
             string ret = string.Empty;
             DTcms.Model.orders order = null;
             string orderdetail = string.Empty;
@@ -259,7 +260,9 @@ namespace DTcms.Web.tools
                     order = orderdetail,
                     bianhao = order.order_no,
                     orderid = order.id.ToString(),
-                    ispaid = order.payment_status.ToString()
+                    ispaid = order.payment_status.ToString(),
+                    takeout = order.takeout.ToString(),
+                    officelinetype = order.officelinetype.ToString()
                 });
             }
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -281,7 +284,7 @@ namespace DTcms.Web.tools
             //DTcms.Common.Log.Info("downloadlistfordispatch:areaids_" + dtUser.Rows[0]["orderarea"].ToString());
             DTcms.BLL.orders bllOrder = new BLL.orders();
             DataTable dtOrder = bllOrder.GetList(30,
-                " ((is_download=0 and (payment_id=1 or payment_id=2)) or (is_download=0 and (payment_id in (3,5,6,7,8,9)) and payment_status=2))"
+                " ((is_download=0 and (payment_id=1 or payment_id=2)) or (is_download=0 and (payment_id in (3,5,6,7,8,9,10)) and payment_status=2))"
                 + " and OrderType='线下订单' and status in (1,2,3) "
                 + " and area_id in (" + dtUser.Rows[0]["orderarea"].ToString() + ")", " id asc").Tables[0];
             string ret = string.Empty;
@@ -341,7 +344,8 @@ namespace DTcms.Web.tools
                     bianhao = (order.order_no != null && order.order_no.Length > 3 ? order.order_no.Substring(order.order_no.Length - 3) : ""),
                     orderid = order.id.ToString(),
                     ispaid = order.payment_status.ToString(),
-                    takeout = order.takeout.ToString()
+                    takeout = order.takeout.ToString(),
+                    officelinetype = order.officelinetype.ToString()
                 });
             }
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -1024,10 +1028,21 @@ namespace DTcms.Web.tools
             OfflineOrderForTest offlineorder = serializer.Deserialize<OfflineOrderForTest>(arg);
             BLL.orders bll = new BLL.orders();
             BookingFood.Model.bf_area area = new BookingFood.BLL.bf_area().GetModel(int.Parse(offlineorder.area));
+            //if (offlineorder.takeout == 0)
+            //    offlineorder.takeout = 1;
+
             //检测订单号是否重复
             if (bll.GetCount(" order_no='" + offlineorder.order_no + "' and area_id=" + offlineorder.area) > 0)
             {
                 Model.orders modelOld = bll.GetModel(offlineorder.order_no);
+                #region 外带转区域
+                if (offlineorder.takeout == 2)
+                {
+                    area = new BookingFood.BLL.bf_area().GetModel(area.OppositeId);
+                    modelOld.address += "外带取餐号:" + modelOld.MpForHere.ToString();
+                }
+                bll.UpdateField(modelOld.id, "takeout=" + offlineorder.takeout + ",area_id=" + area.Id + ",area_title='" + area.Title + "',officelinetype=0,address='" + modelOld.address+"'");
+                #endregion
                 if (modelOld.payment_status == 2)
                 {
                     context.Response.Write("ok");
@@ -1061,19 +1076,70 @@ namespace DTcms.Web.tools
                         bll.UpdateField(modelOld.id, "payment_id=1,payment_status=2");
                         modelOld.payment_id = 1;
                         break;
+                    case "card":
+                        bll.UpdateField(modelOld.id, "payment_id=10");
+                        modelOld.payment_id = 10;
+                        break;
                 }
                 string pay_result = string.Empty;
                 switch (modelOld.payment_id)
                 {
                     case 7:
-                        pay_result = API.Payment.Alipay_ScanCode.AlipayF2F.PayOrder(modelOld.order_no, auth_code, modelOld.order_amount.ToString(), area.Title, area.Id.ToString());
-                        if (!string.Equals(pay_result, "支付成功"))
+                        if (siteConfig.RunTigoon == 0)
                         {
-                            context.Response.Write(pay_result);
-                            Log.Info("pay_result:" + pay_result);
-                            return;
+                            pay_result = API.Payment.Alipay_ScanCode.AlipayF2F.PayOrder(modelOld.order_no, auth_code, modelOld.order_amount.ToString(), area.Title, area.Id.ToString());
+                            if (!string.Equals(pay_result, "支付成功"))
+                            {
+                                context.Response.Write(pay_result);
+                                Log.Info("pay_result:" + pay_result);
+                                return;
+                            }
+                            bll.UpdateField(modelOld.id, "payment_status=2");
                         }
-                        bll.UpdateField(modelOld.id, "payment_status=2");
+                        else
+                        {
+
+                            ChargeRequest<string> get_req = new ChargeRequest<string>();
+                            get_req.amount = modelOld.order_amount;
+                            get_req.out_order_no = modelOld.order_no;
+                            get_req.pay_channel = "alipay_p2p";
+                             get_req.channel = "barcode_pay";
+                            //get_req.barcodepay = "barcode_pay";
+                                    #if DEBUG
+                                                                get_req.ip = "119.180.116.79";
+                                    #else
+                                                                                        get_req.ip = context.Request.UserHostAddress;
+                                    #endif
+                            get_req.subject = area.Title;
+                            get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                            get_req.device_id = System.Net.Dns.GetHostName();
+                            get_req.auth_code = auth_code;
+                            get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
+                            ChargeResponse<string> get_rsp = Client.Execute(get_req);
+                            if (get_rsp.IsError)
+                            {
+                                context.Response.Write(get_rsp.ErrorMsg);
+                                return;
+                            }
+                            ChargeGetRequest tg_result = new ChargeGetRequest();
+                            tg_result.id = get_rsp.Result.Id;
+                            for (int i = 0; i < 10; i++)
+                            {
+                                ChargeGetResponse tg_pay_result = Client.Execute(tg_result);
+                                if (tg_pay_result.Result.Paid)
+                                {
+                                    Log.Info("订单号:" + modelOld.order_no + " 返回的支付结果:" + tg_pay_result.Result.Paid);
+                                    context.Response.Write("支付成功");
+                                    bll.UpdateField(modelOld.id, "payment_status=2");
+                                    break;
+                                }
+                                else
+                                {
+                                    System.Threading.Thread.Sleep(2000);
+                                }
+                            }
+                        }
+                         
                         break;
                     case 8:
 
@@ -1095,6 +1161,7 @@ namespace DTcms.Web.tools
                             get_req.out_order_no = modelOld.order_no;
                             get_req.pay_channel = "wxpay_p2p";
                             get_req.channel = "barcode_pay";
+                           // get_req.barcodepay = "barcode_pay";
 #if DEBUG
                             get_req.ip = "119.180.116.79";
 #else
@@ -1104,7 +1171,7 @@ namespace DTcms.Web.tools
                             get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                             get_req.device_id = System.Net.Dns.GetHostName();
                             get_req.auth_code = auth_code;
-                            get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
+                            get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
                             ChargeResponse<string> get_rsp = Client.Execute(get_req);
                             if (get_rsp.IsError)
                             {
@@ -1132,6 +1199,41 @@ namespace DTcms.Web.tools
                         break;
                     case 1:
 
+                        break;
+                    case 10:
+                        #region 临时卡支付
+                        Log.Info("临时卡支付已有订单.....");
+                        if (!string.IsNullOrEmpty(modelOld.telphone))
+                        {
+                            using (var db = new SonConnection(strcon))
+                            {
+                                var userinfo = db.FindMany<dt_Temporaryuser>(o => o.Telphone == modelOld.telphone).ToList().FirstOrDefault();
+                                if (userinfo == null)
+                                {
+                                    context.Response.Write("该用户无此卡");
+                                    return;
+                                }
+                                if (userinfo.Amount < modelOld.real_amount)
+                                {
+                                    context.Response.Write("卡余额不足!");
+                                    return;
+                                }
+                                userinfo.Amount -= modelOld.real_amount;
+                                if (db.Update<dt_Temporaryuser>(userinfo) < 1)
+                                {
+                                    context.Response.Write("卡支付失败!");
+                                    return;
+                                }
+                                Log.Info("更新订单支付状态已有订单....." + modelOld.id);
+                                bll.UpdateField(modelOld.id, "payment_status=2");
+                            }
+                        }
+                        else
+                        {
+                            context.Response.Write("手机号码为空!");
+                            return;
+                        }
+                        #endregion
                         break;
                 }
                 #region 后厨
@@ -1214,13 +1316,27 @@ namespace DTcms.Web.tools
                     //return;
                     payment_title = "cash";
                 }
+                #region 外带转区域
+                if (offlineorder.takeout == 2)
+                {
+                    area = new BookingFood.BLL.bf_area().GetModel(area.OppositeId);
+                }
+                #endregion
                 Model.orders order = new Model.orders();
+                order.takeout = offlineorder.takeout;
                 order.accept_name = "线下订单";
                 order.add_time = DateTime.Now;
                 order.confirm_time = order.add_time;
                 order.complete_time = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(offlineorder.time));
-                order.address = offlineorder.num;
-
+                if (order.takeout == 2)
+                {
+                    order.address += "外带取餐号:" + offlineorder.order_no.Substring(offlineorder.order_no.Length - 3);
+                }
+                else
+                {
+                    order.address = offlineorder.num;
+                }
+                order.telphone = offlineorder.telphone;
                 order.area_id = area.Id;
                 order.area_title = area.Title;
                 order.distribution_id = 1;
@@ -1232,6 +1348,7 @@ namespace DTcms.Web.tools
                 order.payable_amount = order.order_amount;
                 order.payable_freight = 0;
                 order.payment_fee = 0;
+                order.officelinetype = 0;
                 switch (payment_title)
                 {
                     case "alipay":
@@ -1264,10 +1381,22 @@ namespace DTcms.Web.tools
                         order.payment_id = 1;
                         order.payment_status = 2;
                         break;
+                    case "card":
+                        order.payment_id = 10;
+                        order.payment_status = 1;
+                        break;
                 }
                 order.real_amount = order.order_amount;
                 order.real_freight = 0;
-                order.status = 3;
+                if (order.takeout == 2)
+                {
+                    order.status = 1;
+                }
+                else
+                {
+                    order.status = 3;
+                }
+
                 order.user_id = 0;
                 order.worker_id = 0;
                 #endregion
@@ -1388,8 +1517,9 @@ namespace DTcms.Web.tools
                                 get_req = new ChargeRequest<string>();
                                 get_req.amount = order.order_amount;
                                 get_req.out_order_no = order.order_no;
-                                //get_req.pay_channel = "wxpay_p2p";//alipay_p2p
-                                get_req.channel = "barcode_pay";
+                               
+                                //get_req.channel = "barcode_pay";
+                                get_req.pay_channel = "barcode_pay";
 #if DEBUG
                                 get_req.ip = "119.180.116.79";
 #else
@@ -1399,7 +1529,7 @@ namespace DTcms.Web.tools
                                 get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                 get_req.device_id = System.Net.Dns.GetHostName();
                                 get_req.auth_code = auth_code;
-                                get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
+                                get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
 
                                 try
                                 {
@@ -1478,7 +1608,8 @@ namespace DTcms.Web.tools
                                 get_req.amount = order.order_amount;
                                 get_req.out_order_no = order.order_no;
                                 //get_req.pay_channel = "wxpay_p2p";//alipay_p2p
-                                get_req.channel = "barcode_pay";
+                                //get_req.channel = "barcode_pay";
+                                get_req.pay_channel = "barcodepay";
 #if DEBUG
                                 get_req.ip = "119.180.116.79";
 #else
@@ -1488,7 +1619,7 @@ namespace DTcms.Web.tools
                                 get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                 get_req.device_id = System.Net.Dns.GetHostName();
                                 get_req.auth_code = auth_code;
-                                get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
+                                get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_jsapi/feedback2.aspx";
 
                                 try
                                 {
@@ -1574,7 +1705,7 @@ namespace DTcms.Web.tools
 #else
                 packageReqHandler.SetParameter("spbill_create_ip", context.Request.UserHostAddress);   //用户的公网ip，不是商户服务器IP
 #endif
-                                packageReqHandler.SetParameter("notify_url", "http://www.4008317417.cn/api/payment/mppay_native/feedback_offline.aspx");         //接收财付通通知的URL
+                                packageReqHandler.SetParameter("notify_url", "https://www.4008317417.cn/api/payment/mppay_native/feedback_offline.aspx");         //接收财付通通知的URL
                                 packageReqHandler.SetParameter("trade_type", TenPayV3Type.NATIVE.ToString());                       //交易类型
                                 packageReqHandler.SetParameter("product_id", result.ToString());                        //商品ID
 
@@ -1597,7 +1728,7 @@ namespace DTcms.Web.tools
                                     Log.Info(res.ToString());
                                 }
                                 context.Response.Write("{\"msg\":1,\"msgbox\":\"订单已成功提交！\",\"orderid\":" + result
-                                    + ",\"orderno\":\"" + order.order_no + "\", \"code_url\":\"http://www.4008317417.cn/api/payment/mppay_native/getqr.ashx?code_url=" + Utils.UrlEncode(code_url) + "\"}");
+                                    + ",\"orderno\":\"" + order.order_no + "\", \"code_url\":\"https://www.4008317417.cn/api/payment/mppay_native/getqr.ashx?code_url=" + Utils.UrlEncode(code_url) + "\"}");
                                 return;
                             }
                             else
@@ -1614,8 +1745,8 @@ namespace DTcms.Web.tools
                                                         get_req.ip = context.Request.UserHostAddress;
 #endif
                                 get_req.subject = siteConfig.webname + "微信订单";
-                                get_req.return_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
-                                get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
+                                get_req.return_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
+                                get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
                                 get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                 get_req.device_id = System.Net.Dns.GetHostName();
                                 get_req.charge_type = "pay";
@@ -1630,27 +1761,27 @@ namespace DTcms.Web.tools
                                 #endregion
                             }
 
-                            break;
+                        // break;
                         case "alipayscan":
                             if (siteConfig.RunTigoon == 0)
                             {
                                 var BizContent = "{" +
                                      "\"out_trade_no\":\"" + order.order_no + "\"," +
                                      "\"seller_id\":\"" + DTcms.API.Payment.Alipay_ScanCode.Config.pid + "\"," +
-                                     "\"total_amount\":" + (order.real_amount * 100).ToString().Replace(".00", "") + "," +
+                                     "\"total_amount\":" + (order.real_amount).ToString().Replace(".00", "") + "," +
                                      "\"subject\":\"" + order.order_goods[0].goods_name + "等\"," +
                                      "\"goods_detail\":[{" +
                                      "\"goods_id\":\"" + order.order_goods[0].goods_id + "\"," +
                                      "\"goods_name\":\"" + order.order_goods[0].goods_name + "\"," +
                                      "\"quantity\":1," +
                                      "\"price\":" + order.order_goods[0].goods_price + "," +
-                                     "\"body\":\"外卖小吃\"," +
+                                     "\"body\":\"外卖小吃\"" +
                                      "}]," +
                                      "\"body\":\"" + siteConfig.webname + "外卖订单" + "\"," +
                                      "\"operator_id\":\"001\"," +
                                      "\"store_id\":\"" + order.area_title + "\"," +
-                                     "\"disable_pay_channels\":\"pcredit,moneyFund,debitCardExpress\"," +
-                                     "\"enable_pay_channels\":\"pcredit,moneyFund,debitCardExpress\"," +
+                                     //"\"disable_pay_channels\":\"pcredit,moneyFund,debitCardExpress\"," +
+                                     //"\"enable_pay_channels\":\"pcredit,moneyFund,debitCardExpress\"," +
                                      "\"terminal_id\":\"001\"," +
                                      "\"extend_params\":{" +
                                      "\"sys_service_provider_id\":\"" + DTcms.API.Payment.Alipay_ScanCode.Config.pid + "\"" +
@@ -1660,20 +1791,25 @@ namespace DTcms.Web.tools
                                 var data = API.Payment.Alipay_ScanCode.AlipayF2F.PreCreatePay(BizContent.Trim());
                                 Log.Info("支付宝扫码请求参数:" + BizContent);
                                 Log.Info("支付宝返回结果：" + data);
-                                var res = XDocument.Parse(data);
+                                var res = JsonConvert.DeserializeObject<AliPayDto>(data.Trim());
                                 string prepayId = string.Empty;
                                 string code_url = string.Empty;
                                 try
                                 {
-                                    prepayId = res.Element("xml").Element("out_trade_no").Value;
-                                    code_url = res.Element("xml").Element("qr_code").Value;
+                                    if (res != null && res.alipay_trade_precreate_response.msg == "Success")
+                                    {
+                                        prepayId = res.alipay_trade_precreate_response.out_trade_no;
+                                        code_url = res.alipay_trade_precreate_response.qr_code;
+                                    }
+                                    Log.Info("支付宝返回参数订单号======>" + prepayId);
+                                    Log.Info("支付宝返回参数qrcode======>" + code_url);
                                 }
                                 catch (Exception)
                                 {
                                     Log.Info(data);
                                 }
                                 context.Response.Write("{\"msg\":1,\"msgbox\":\"订单已成功提交！\",\"orderid\":" + result
-                                    + ",\"orderno\":\"" + order.order_no + "\", \"code_url\":\"http://www.4008317417.cn/api/payment/mppay_native/getqr.ashx?code_url=" + Utils.UrlEncode(code_url) + "\"}");
+                                    + ",\"orderno\":\"" + order.order_no + "\", \"code_url\":\"https://www.4008317417.cn/api/payment/mppay_native/getqr.ashx?code_url=" + Utils.UrlEncode(code_url) + "\"}");
                                 return;
                             }
                             else
@@ -1688,8 +1824,8 @@ namespace DTcms.Web.tools
                                                         get_req.ip = context.Request.UserHostAddress;
 #endif
                                 get_req.subject = siteConfig.webname + "微信订单";
-                                get_req.return_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
-                                get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
+                                get_req.return_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
+                                get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback_offline.aspx";
                                 get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                 get_req.device_id = System.Net.Dns.GetHostName();
                                 get_req.charge_type = "pay";
@@ -1704,6 +1840,41 @@ namespace DTcms.Web.tools
                             }
                         case "cash":
 
+                            break;
+                        case "card":
+                            #region 临时卡支付
+                            Log.Info("临时卡支付.....");
+                            if (!string.IsNullOrEmpty(order.telphone))
+                            {
+                                using (var db = new SonConnection(strcon))
+                                {
+                                    var userinfo = db.FindMany<dt_Temporaryuser>(o => o.Telphone == order.telphone).ToList().FirstOrDefault();
+                                    if (userinfo == null)
+                                    {
+                                        context.Response.Write("该用户无此卡");
+                                        return;
+                                    }
+                                    if (userinfo.Amount < order.real_amount)
+                                    {
+                                        context.Response.Write("卡余额不足!");
+                                        return;
+                                    }
+                                    userinfo.Amount -= order.real_amount;
+                                    if (db.Update<dt_Temporaryuser>(userinfo) < 1)
+                                    {
+                                        context.Response.Write("卡支付失败!");
+                                        return;
+                                    }
+                                    Log.Info("修改支付状态.....+订单状态" + order.order_no);
+                                    bll.UpdateField(order.order_no, "payment_status=2");
+                                }
+                            }
+                            else
+                            {
+                                context.Response.Write("手机号码为空!");
+                                return;
+                            }
+                            #endregion
                             break;
                     }
                     if (!string.Equals(payment_title, "mppayscan") && !string.Equals(payment_title, "alipayscan"))
@@ -1947,7 +2118,7 @@ namespace DTcms.Web.tools
                 modelGoods = bll.GetGoodsModel(int.Parse(item["id"].ToString()));
                 rtn += "\"" + item["id"].ToString() + "\":{\"sort\":\"" + item["sort_id"].ToString()
                     + "\",\"name\":\"" + item["title"].ToString() + "\",\"price\":\"" + item["sell_price"].ToString()
-                    + "\",\"img\":\"" + (modelGoods.albums.Count > 0 ? "http://www.4008317417.cn" + modelGoods.albums[0].big_img : string.Empty)
+                    + "\",\"img\":\"" + (modelGoods.albums.Count > 0 ? "https://www.4008317417.cn" + modelGoods.albums[0].big_img : string.Empty)
                     + "\",\"taste\":\"" + (!string.IsNullOrEmpty(item["taste"].ToString()) ? item["taste"].ToString() + "," : string.Empty)
                                         + string.Join(",", item["condition_price"].ToString().Split(',').Select(s => s.Split('†')[0]))
                     + "\",\"islock\":\"" + islock + "\",\"condition_price\":\"\",\"guqing\":\"" + guqing + "\"},";
@@ -1996,7 +2167,7 @@ namespace DTcms.Web.tools
                 combo.SortId = int.Parse(item["SortId"].ToString());
                 combo.Taste = item["Taste"].ToString();
                 combo.Title = item["Title"].ToString();
-                combo.Img = "http://www.4008317417.cn" + item["Photo"].ToString();
+                combo.Img = "https://www.4008317417.cn" + item["Photo"].ToString();
                 temp = listAreaArticle.FirstOrDefault(s => s.ArticleId.ToString() == item["id"].ToString());
                 string islock = "1";
                 string guqing = "1";
@@ -2037,7 +2208,7 @@ namespace DTcms.Web.tools
                             combogooddetail.Title = ds.Tables[0].Rows[i]["title"].ToString();
                             combogooddetail.Taste = (!string.IsNullOrEmpty(ds.Tables[0].Rows[i]["taste"].ToString()) ? ds.Tables[0].Rows[i]["taste"].ToString() + "," : string.Empty)
                                         + string.Join(",", ds.Tables[0].Rows[i]["condition_price"].ToString().Split(',').Select(s => s.Split('†')[0]));
-                            combogooddetail.Img = "http://www.4008317417.cn" + ds.Tables[0].Rows[i]["mp_img_url"].ToString();
+                            combogooddetail.Img = "https://www.4008317417.cn" + ds.Tables[0].Rows[i]["mp_img_url"].ToString();
                             combogooddetail.IsLock = (temp != null ? temp.IsLock.ToString() : "1");
                             combodetail.List.Add(combogooddetail);
                         }
@@ -2068,7 +2239,7 @@ namespace DTcms.Web.tools
                 downloadgooddetail.SortId = Convert.ToInt32(item["sort_id"]);
                 downloadgooddetail.Name = item["title"].ToString();
                 downloadgooddetail.Price = Convert.ToDecimal(item["sell_price"]);
-                downloadgooddetail.Img = modelGoods.albums.Count > 0 ? "http://www.4008317417.cn" + modelGoods.albums[0].big_img : string.Empty;
+                downloadgooddetail.Img = modelGoods.albums.Count > 0 ? "https://www.4008317417.cn" + modelGoods.albums[0].big_img : string.Empty;
                 //downloadgooddetail.condition_price = item["condition_price"].ToString();
                 downloadgooddetail.IsLock = islock;
                 downloadgooddetail.guqing = guqing;
@@ -2105,7 +2276,7 @@ namespace DTcms.Web.tools
                 combo.SortId = int.Parse(item["SortId"].ToString());
                 combo.Taste = item["Taste"].ToString();
                 combo.Title = item["Title"].ToString();
-                combo.Img = "http://www.4008317417.cn" + item["Photo"].ToString();
+                combo.Img = "https://www.4008317417.cn" + item["Photo"].ToString();
                 temp = listAreaArticle.FirstOrDefault(s => s.ArticleId.ToString() == item["id"].ToString());
                 string islock = "1";
                 string guqing = "1";
@@ -2147,7 +2318,7 @@ namespace DTcms.Web.tools
                             combogooddetail.Title = ds.Tables[0].Rows[i]["title"].ToString();
                             combogooddetail.Taste = (!string.IsNullOrEmpty(ds.Tables[0].Rows[i]["taste"].ToString()) ? ds.Tables[0].Rows[i]["taste"].ToString() + "," : string.Empty)
                                         + string.Join(",", ds.Tables[0].Rows[i]["condition_price"].ToString().Split(',').Select(s => s.Split('†')[0]));
-                            combogooddetail.Img = "http://www.4008317417.cn" + ds.Tables[0].Rows[i]["mp_img_url"].ToString();
+                            combogooddetail.Img = "https://www.4008317417.cn" + ds.Tables[0].Rows[i]["mp_img_url"].ToString();
                             combogooddetail.IsLock = (temp != null ? temp.IsLock.ToString() : "1");
 
                         }
@@ -2440,8 +2611,8 @@ namespace DTcms.Web.tools
         }
 
 
-           #region 临时用户
-       private void GetTempuser(HttpContext context)
+        #region 临时用户
+        private void GetTempuser(HttpContext context)
         {
             var tel = context.Request.Params["telphone"];
             var TempuserDto = new dt_Temporaryuser();
@@ -2474,7 +2645,7 @@ namespace DTcms.Web.tools
             return time;
         }
 
-       
+
     }
 
     #region 下载订单
@@ -2491,6 +2662,7 @@ namespace DTcms.Web.tools
         public string orderid { get; set; }
         public string ispaid { get; set; }
         public string takeout { get; set; }
+        public string officelinetype { get; set; }
 
     }
     #endregion
@@ -2524,6 +2696,8 @@ namespace DTcms.Web.tools
         public string order_no { get; set; }
         public string payment_title { get; set; }
         public string auth_code { get; set; }
+        public string telphone { get; set; }
+        public int takeout { get; set; }
     }
     public class OfflineOrderDetailForTest
     {
@@ -2599,6 +2773,22 @@ namespace DTcms.Web.tools
         public string title { get; set; }
         public string offline { get; set; }
         public string online { get; set; }
+    }
+
+    public class AliPayDto
+    {
+       public AliPaySubDto alipay_trade_precreate_response { get; set; }
+        public string sign { get; set; }
+    }
+    public class AliPaySubDto
+    {
+        public string code { get; set; }
+
+        public string msg { get; set; }
+
+        public string out_trade_no { get; set; }
+
+        public string qr_code { get; set; }
     }
 
 }

@@ -206,6 +206,7 @@
     <Content Include="frank3660\users\oauth_list.aspx" />
     <Content Include="frank3660\users\oauth_user_list.aspx" />
     <Content Include="frank3660\vipUser\confirm_Charge_list.aspx" />
+    <Content Include="frank3660\vipUser\User_ChargeOrder_list.aspx" />
     <Content Include="frank3660\worker\list.aspx" />
     <Content Include="api\oauth\feixin\index.aspx" />
     <Content Include="api\oauth\feixin\result_json.aspx" />
@@ -1384,6 +1385,13 @@
     </Compile>
     <Compile Include="frank3660\vipUser\confirm_Charge_list.aspx.designer.cs">
       <DependentUpon>confirm_Charge_list.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frank3660\vipUser\User_ChargeOrder_list.aspx.cs">
+      <DependentUpon>User_ChargeOrder_list.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frank3660\vipUser\User_ChargeOrder_list.aspx.designer.cs">
+      <DependentUpon>User_ChargeOrder_list.aspx</DependentUpon>
     </Compile>
     <Compile Include="frank3660\worker\list.aspx.cs">
       <DependentUpon>list.aspx</DependentUpon>

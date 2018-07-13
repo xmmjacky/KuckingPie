@@ -73,12 +73,14 @@ namespace TeeGonSdk
         private T DoExecute<T>(ITopRequest<T> request, string session, DateTime timestamp) where T : TopResponse
         {
             // 提前检查业务参数
+            //DTcms.Common.Log.Info("downloadlist:areaids_" +);
             try
             {
                 request.Validate();
             }
             catch (TopException e)
             {
+                DTcms.Common.Log.Info("天工支付异常"+e.ToString());
                 return CreateErrorResponse<T>(e.Error);
             }
 
@@ -96,13 +98,19 @@ namespace TeeGonSdk
 
             string realServerUrl = GetServerUrl(this.serverUrl, request.GetApiName(), session);
             //string reqUrl = WebUtils.BuildRequestUrl(realServerUrl, txtParams);
+            DTcms.Common.Log.Info("获取天工url" + serverUrl);
+            DTcms.Common.Log.Info("获取天工接口名称" + request.GetApiName());
             try
             {
                 string body = "";
                 if (request.IsPost())
                 {
                     txtParams.Add("sign", TopUtils.SignTopRequest(txtParams, txtParams["client_secret"], "md5"));
+                    foreach (var item in txtParams) {
+                        DTcms.Common.Log.Info(string.Format("获取天工接口参数Key---->{0},Value---->{1}",item.Key,item.Value));
+                    }
                     body = webUtils.DoPost(realServerUrl, txtParams, request.GetHeaderParameters());
+                    DTcms.Common.Log.Info("获取天工接口返回参数"+body);
                 }
                 else
                 {
@@ -124,6 +132,7 @@ namespace TeeGonSdk
             }
             catch (Exception e)
             {
+                DTcms.Common.Log.Info("天工返回结果异常"+e.ToString());
                 throw e;
             }
         }

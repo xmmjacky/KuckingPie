@@ -9,7 +9,7 @@
     <script src="{config.templateskin}/js/jquery-1.10.2.min.js" type="text/javascript"></script>
     <script src="{config.templateskin}/js/jquery-ui.min.js" type="text/javascript"></script>
     <link media="screen" type="text/css" href="{config.templateskin}/css/jquery-ui.min.css" rel="stylesheet">
-    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z"></script>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script type="text/javascript">
         wx.config({
@@ -24,8 +24,8 @@
             <%if modelCompay!=null%>
             var wxShareTitle = '1分钱吃馍,企业专享';
             var wxShareDesc = '招齐50位同事,1分钱吃馍乐翻天';
-            var wxShareImage = 'http://4008317417.cn/company_qr/{modelCompay.Id}.jpg';
-            var wxShareUrl = 'http://4008317417.cn/mp_show_company.aspx?companyid={modelCompay.Id}';
+            var wxShareImage = 'https://4008317417.cn/company_qr/{modelCompay.Id}.jpg';
+            var wxShareUrl = 'https://4008317417.cn/mp_show_company.aspx?companyid={modelCompay.Id}';
             wx.onMenuShareTimeline({
                 title: wxShareTitle, // 分享标题
                 link: wxShareUrl, // 分享链接

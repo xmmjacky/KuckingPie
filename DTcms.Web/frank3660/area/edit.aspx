@@ -18,7 +18,7 @@
 <script type="text/javascript" src="../js/function.js"></script>
 <script type="text/javascript" charset="utf-8" src="../../editor/kindeditor-min.js"></script>
 <script type="text/javascript" charset="utf-8" src="../../editor/lang/zh_CN.js"></script>
-<script type="text/javascript" src="http://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&libraries=drawing"></script>
+<script type="text/javascript" src="https://map.qq.com/api/js?v=2.exp&key=BOEBZ-2AB2R-IKTWG-W2JQG-HEUOV-2RF7Z&libraries=drawing"></script>
 <script type="text/javascript">    
     //表单验证
     $(function () {

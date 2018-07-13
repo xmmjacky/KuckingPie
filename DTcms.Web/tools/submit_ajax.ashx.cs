@@ -1825,11 +1825,13 @@ namespace DTcms.Web.tools
             //如果是先款后货的话
             if (payModel.type == 1)
             {
+                model.officelinetype = 2;
                 model.payment_fee = 0;
                 model.payment_status = 1;
             }
             else
             {
+                model.officelinetype = 1;
                 model.payment_fee = 0;
                 model.payment_status = 1;
             }
@@ -1892,7 +1894,7 @@ namespace DTcms.Web.tools
             DTcms.Model.orders orderModel = orderbll.GetModel(result);
             if (orderModel != null)
             {
-                if (orderModel.user_address_id != 0)
+                if (orderModel.user_address_id != 0&&!orderModel.address.Contains("打包")&&!orderModel.address.Contains("堂吃"))
                 {
                     BookingFood.BLL.bf_user_address bllUserAddress = new BookingFood.BLL.bf_user_address();
                     BookingFood.Model.bf_user_address modelUserAddress =
@@ -2117,7 +2119,7 @@ namespace DTcms.Web.tools
                     packageReqHandler.SetParameter("notify_url", System.Configuration.ConfigurationManager.AppSettings["TenPayV3_TenpayNativeNotify"]);         //接收财付通通知的URL
                     packageReqHandler.SetParameter("trade_type", TenPayV3Type.NATIVE.ToString());                       //交易类型
                     packageReqHandler.SetParameter("product_id", result.ToString());                        //商品ID
-                   
+
                     string sign = packageReqHandler.CreateMd5Sign("key", TenPayV3Info.Key);
                     packageReqHandler.SetParameter("sign", sign);                       //签名
 
@@ -2151,8 +2153,8 @@ namespace DTcms.Web.tools
                                                         get_req.ip = context.Request.UserHostAddress;
 #endif
                     get_req.subject = siteConfig.webname + "微信订单";
-                    get_req.return_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback.aspx";
-                    get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_wxpay/feedback.aspx";
+                    get_req.return_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback.aspx";
+                    get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_wxpay/feedback.aspx";
                     get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                     get_req.device_id = System.Net.Dns.GetHostName();
                     get_req.charge_type = "pay";
@@ -2200,7 +2202,7 @@ namespace DTcms.Web.tools
                 State = 0,
                 UserId = Convert.ToInt32(userid),
                 Type = chargetype,
-                Paystate=0
+                Paystate = 0
             };
             using (var db = new SonConnection(strcon))
             {
@@ -2247,7 +2249,7 @@ namespace DTcms.Web.tools
             //string code_url = string.Empty;
             try
             {
-                
+
                 prepayId = res.Element("xml").Element("prepay_id").Value;
                 Log.Info("prepayId" + prepayId);
                 //code_url = res.Element("xml").Element("code_url").Value;
@@ -3611,12 +3613,12 @@ namespace DTcms.Web.tools
             BookingFood.BLL.bf_user_voucher bllUserVoucher = new BookingFood.BLL.bf_user_voucher();
             int avaliableCompanyAmount = (int)bllUserVoucher.GetModelList("UserId=" + userModel.id + " and GetDate()<ExpireTime and Status=0").Sum(s => s.Amount);
             decimal isVip = cartModel.voucher_total;
-            if (takeout == 0 && (cartModel.real_amount - cartModel.voucher_total) >= 99 && modelCompany != null && avaliableCompanyAmount >= (5 + cartModel.voucher_total) && siteConfig.enable_waimai_vip)
+            if (takeout == 0 && (cartModel.real_amount - cartModel.voucher_total) >= 10000 && modelCompany != null && avaliableCompanyAmount >= (5 + cartModel.voucher_total) && siteConfig.enable_waimai_vip)
             {
                 cartModel.real_amount -= 5;
                 isVip += 5;
             }
-            else if (takeout > 0 && (cartModel.real_amount - cartModel.voucher_total) >= 39 && modelCompany != null && avaliableCompanyAmount >= (2 + cartModel.voucher_total))
+            else if (takeout > 0 && (cartModel.real_amount - cartModel.voucher_total) >= 10000 && modelCompany != null && avaliableCompanyAmount >= (2 + cartModel.voucher_total))
             {
                 cartModel.real_amount -= 2;
                 isVip += 2;
@@ -3738,6 +3740,7 @@ namespace DTcms.Web.tools
             model.email = "From WeChat";
             model.address = (takeout == 0 ? address : "");
             model.message = message;
+
             if (string.Equals(additional, "1"))
             {
                 model.message += "【补单】";
@@ -3753,11 +3756,13 @@ namespace DTcms.Web.tools
             model.area_type = dismountid;
             if (takeout == 0)
             {
+                model.officelinetype = 2;
                 model.OrderType = "微信";
                 model.telphone = telphone;
             }
             else
             {
+                model.officelinetype = 1;
                 model.OrderType = "线下订单";
                 model.telphone = inorout;
             }
@@ -3767,11 +3772,13 @@ namespace DTcms.Web.tools
             //如果是先款后货的话
             if (payModel.type == 1)
             {
+
                 model.payment_fee = 0;
                 model.payment_status = 1;
             }
             else
             {
+
                 model.payment_fee = 0;
                 model.payment_status = 1;
             }
@@ -3859,6 +3866,38 @@ namespace DTcms.Web.tools
                 context.Response.Write("{\"msg\":0, \"msgbox\":\"订单保存过程中发生错误，请重新提交！\"}");
                 return;
             }
+            #region 更新用户最新的区域
+            if (model.user_id > 0&&!model.address.Contains("打包")&&!model.address.Contains("堂吃"))
+            {
+                using (var db = new SonConnection(strcon))
+                {
+                    var useraddresslist = db.FindMany<BookingFood.Model.bf_user_address>(o => o.UserId == model.user_id&&o.AreaId==model.area_id);
+                    if (useraddresslist.Count > 0)
+                    {
+                        useraddresslist.OrderByDescending(o => o.Id);
+                        useraddresslist[0].NickName = model.accept_name;
+                        useraddresslist[0].Address = model.address;
+                        useraddresslist[0].Telphone = model.telphone;
+                        db.Update(useraddresslist[0]);
+                    }
+                    else
+                    {
+                        var useraddress = new BookingFood.Model.bf_user_address()
+                        {
+                            UserId = model.user_id,
+                            NickName = model.accept_name,
+                            Address = model.address,
+                            Telphone = model.telphone,
+                            AreaId = model.area_id,
+                            AreaTitle = model.area_title,
+                            AreaType = model.area_type
+                        };
+                        BookingFood.BLL.bf_user_address bllUserAddress = new BookingFood.BLL.bf_user_address();
+                        bllUserAddress.Add(useraddress);
+                    }
+                }
+            }
+            #endregion
 
             //补单的话，更新被补的订单的additional_count
             if (string.Equals(additional, "1"))
@@ -4146,8 +4185,8 @@ namespace DTcms.Web.tools
                                             get_req.ip = context.Request.UserHostAddress;
 #endif
                         get_req.subject = siteConfig.webname + "微信订单";
-                        get_req.return_url = "http://www.4008317417.cn/payment.aspx";
-                        get_req.notify_url = "http://www.4008317417.cn/api/payment/teegon_jsapi/feedback.aspx";
+                        get_req.return_url = "https://www.4008317417.cn/payment.aspx";
+                        get_req.notify_url = "https://www.4008317417.cn/api/payment/teegon_jsapi/feedback.aspx";
                         get_req.metadata = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                         get_req.device_id = System.Net.Dns.GetHostName();
                         get_req.charge_type = "pay";
@@ -4177,9 +4216,52 @@ namespace DTcms.Web.tools
                             model.payment_status = 2;
                             var bllUser = new BLL.users();
 
-                            if (bllUser.UpdateField(userModel.id, "account='" + userModel.account + "'")>0)
+                            if (bllUser.UpdateField(userModel.id, "account='" + userModel.account + "'") > 0)
                             {
                                 bllOrders.UpdateField(result, "payment_status='" + model.payment_status + "'");
+                                #region 处理群组优惠金额的扣减
+                                if (model.voucher_total > 0)
+                                {
+                                    BookingFood.BLL.bf_user_voucher bllUserVouchernew = new BookingFood.BLL.bf_user_voucher();
+                                    List<BookingFood.Model.bf_user_voucher> listVoucher =
+                                        bllUserVouchernew.GetModelList("UserId=" + model.user_id + " and GetDate()<ExpireTime and Status=0");
+                                    decimal _unless = 0;
+                                    foreach (var item in listVoucher)
+                                    {
+                                        if (_unless > 0)
+                                        {
+                                            if (item.Amount >= _unless)
+                                            {
+                                                item.Amount -= _unless;
+                                                bllUserVouchernew.Update(item);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                _unless = _unless - item.Amount;
+                                                item.Amount = 0;
+                                                bllUserVouchernew.Update(item);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.Amount >= model.voucher_total)
+                                            {
+                                                item.Amount -= model.voucher_total;
+                                                bllUserVouchernew.Update(item);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                _unless = model.voucher_total - item.Amount;
+                                                item.Amount = 0;
+                                                bllUserVouchernew.Update(item);
+                                            }
+                                        }
+
+                                    }
+                                }
+                                #endregion
                                 context.Response.Write("{\"msg\":1,\"msgbox\":\"支付完成\",\"forhere\":\"" + model.MpForHere + "\"}");
                             }
                             else
@@ -4189,16 +4271,17 @@ namespace DTcms.Web.tools
                         }
                         else
                         {
-                            context.Response.Write("{\"msg\":-1,\"msgbox\":\"充值支付失败\",\"forhere\":\"" + model.MpForHere + "\"}");
-                           
+                            context.Response.Write("{\"msg\":-1,\"msgbox\":\"充值支付不足\",\"forhere\":\"" + model.MpForHere + "\"}");
+
                         }
                     }
-                    catch (Exception ex){
-                        Log.Info("余额支付："+ex.Message);
+                    catch (Exception ex)
+                    {
+                        Log.Info("余额支付：" + ex.Message);
                     }
                     #endregion
 
-                }       
+                }
             }
             #region 处理满送业务
             if (takeout == 0 && payModel.id == 1)//外卖订单，增加满送记录
@@ -4459,7 +4542,7 @@ namespace DTcms.Web.tools
             {
                 rtn += string.Format("<li class=\"item \" data-id=\"{0}\" data-content=\"{2}\""
                     + " data-title=\"{1}\">{1}{4}"
-                    + "<a style=\"float:right; margin-top:-5px; \" href=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:{5},{6};title:{1};addr:{2}\"><img src=\"/templates/green/images/20150731114208930_easyicon_net_32.png\"/></a>"
+                    + "<a style=\"float:right; margin-top:-5px; \" href=\"https://apis.map.qq.com/uri/v1/marker?marker=coord:{5},{6};title:{1};addr:{2}\"><img src=\"/templates/green/images/20150731114208930_easyicon_net_32.png\"/></a>"
                         + "<span>{2}</span></li>"
                     , item["Id"].ToString()
                     , item["Title"].ToString()
@@ -4610,7 +4693,7 @@ namespace DTcms.Web.tools
             int avaliableCompanyAmount = (int)bllUserVoucher.GetModelList("UserId=" + userModel.id + " and GetDate()<ExpireTime and Status=0").Sum(s => s.Amount);
             //20170526 因线上活动没有显示出商品,暂时去掉5元优惠券的条件  && avaliableCompanyAmount>=5
             //20170730 重新加上这个条件,不满足5元时不显示,降低用户学习成本
-            if (carnivalOffline != null && avaliableCompanyAmount >= 5 && userModel.company_id != 0)
+            if (carnivalOffline != null && avaliableCompanyAmount >= 7 && userModel.company_id != 0)
             {
                 BookingFood.Model.bf_area modelArea = new BookingFood.BLL.bf_area().GetModel(int.Parse(areaid));
                 BLL.users bllUser = new BLL.users();
@@ -4893,7 +4976,7 @@ namespace DTcms.Web.tools
         public static string WGS84ToGCJ02(double lon, double lat)
         {
             WebClient server = new WebClient();
-            string url = String.Format("http://restapi.amap.com/v3/assistant/coordinate/convert?locations={0},{1}&coordsys=gps&output=json&key={2}", lon, lat, KEY);
+            string url = String.Format("https://restapi.amap.com/v3/assistant/coordinate/convert?locations={0},{1}&coordsys=gps&output=json&key={2}", lon, lat, KEY);
             var replyBuffer = server.DownloadData(url);
             var reply = System.Text.Encoding.UTF8.GetString(replyBuffer);
             if (String.IsNullOrEmpty(reply))
@@ -4909,6 +4992,6 @@ namespace DTcms.Web.tools
                 return "";
         }
 
-       
+
     }
 }

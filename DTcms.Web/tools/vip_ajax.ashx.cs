@@ -152,7 +152,7 @@ namespace DTcms.Web.tools
                     };
                     db.Insert(userconfirm);
 
-                    var useraccountstr = string.Format(@" update dt_users set account=account+{0} where id={1}", userconfirm.Amount,userconfirm.UserId);
+                    var useraccountstr = string.Format(@" update dt_users set account=isnull(account,0)+{0} where id={1}", userconfirm.Amount,userconfirm.UserId);
                     db.ExecuteSql(useraccountstr);
                     #endregion
                     retres.msg = 1;

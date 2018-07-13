@@ -372,7 +372,7 @@ namespace DTcms.Web.api.payment.teegon_jsapi
                             try
                             {
                                 Senparc.Weixin.MP.AdvancedAPIs.Template.SendTemplateMessage(accessToken, userModel.user_name, "KPeoGA1cOZTDiqAf1IECWauABgqtz-P-y-zHME9hhp8"
-                                , "#173177", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc5776b5774a3d010&redirect_uri=http%3A%2F%2Fwww.4008317417.cn%2Fmp_join_company.aspx%3Fshowwxpaytitle%3D1&response_type=code&scope=snsapi_userinfo&state=slave#wechat_redirect", tempData);
+                                , "#173177", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc5776b5774a3d010&redirect_uri=https%3A%2F%2Fwww.4008317417.cn%2Fmp_join_company.aspx%3Fshowwxpaytitle%3D1&response_type=code&scope=snsapi_userinfo&state=slave#wechat_redirect", tempData);
                             }
                             catch (Exception ex) { }
                         }

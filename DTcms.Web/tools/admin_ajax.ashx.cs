@@ -306,7 +306,7 @@ namespace DTcms.Web.tools
             context.Response.Write("{\"msg\":1,\"sortid\":\"" + workerModel.SortId.ToString()
                 + "\", \"title\":\"" + workerModel.Title + "\", \"telphone\":\"" + workerModel.Telphone
                 + "\", \"workertype\":\"" + workerModel.WorkerType
-                + "\", \"operatetype\":\"" + workerModel.OperateType                
+                + "\", \"operatetype\":\"" + workerModel.OperateType
                 + "\",\"msgbox\":\"" + rtn + "\"" + "}");
         }
 
@@ -402,7 +402,7 @@ namespace DTcms.Web.tools
             DTcms.Model.orders orderModel = new DTcms.BLL.orders().GetModel(int.Parse(orderid));
             if (orderModel != null)
             {
-                context.Response.Write("{\"telphone\":\"" + orderModel.telphone + "\", \"address\":\"" + orderModel.address + "\", \"message\":\"" + orderModel.message.Replace("\n","") + "\"}");
+                context.Response.Write("{\"telphone\":\"" + orderModel.telphone + "\", \"address\":\"" + orderModel.address + "\", \"message\":\"" + orderModel.message.Replace("\n", "") + "\"}");
                 return;
             }
         }
@@ -426,15 +426,24 @@ namespace DTcms.Web.tools
                 userModel.telphone = telphone;
                 userModel.address = address;
                 BookingFood.BLL.bf_user_address bllUserAddress = new BookingFood.BLL.bf_user_address();
-                if(orderModel.user_address_id!=0)
+                try
                 {
-                    BookingFood.Model.bf_user_address modelUserAddress = 
-                        bllUserAddress.GetModel(orderModel.user_address_id);
-                
-                    modelUserAddress.Telphone = telphone;
-                    modelUserAddress.Address = address;
-                    bllUserAddress.Update(modelUserAddress);
+                    var str = string.Format(@"UserId={0}", orderModel.user_id);
+                    var blluserlist =
+                        bllUserAddress.GetModelList(str);
+                    if (blluserlist.Count > 0)
+                    {
+                        blluserlist.OrderByDescending(o => o.Id);
+                        blluserlist[0].Telphone = telphone;
+                        blluserlist[0].Address = address;
+                        bllUserAddress.Update(blluserlist[0]);
+                    }
                 }
+                catch(Exception ex)
+                {
+
+                }
+               
                 context.Response.Write("{\"msg\":1, \"msgbox\":\"修改成功！\"}");
                 return;
             }
@@ -457,7 +466,7 @@ namespace DTcms.Web.tools
                 oldid = orderModel.area_id;
                 oldtitle = orderModel.area_title;
                 oldorderno = orderModel.order_no;
-                
+
                 orderModel.OrderType = "转单(区域)";
                 orderModel.order_no = Utils.GetOrderNumber();
                 orderModel.add_time = DateTime.Now;
@@ -526,7 +535,7 @@ namespace DTcms.Web.tools
             string type = context.Request.Params["type"];
             BookingFood.BLL.bf_area bll = new BookingFood.BLL.bf_area();
             BookingFood.Model.bf_area bo = bll.GetModel(id);
-            switch(type)
+            switch (type)
             {
                 case "busy":
                     if (bo.IsBusy == 0)
@@ -572,12 +581,12 @@ namespace DTcms.Web.tools
             string orderno = DTRequest.GetFormString("orderno");
             BLL.orders bll = new BLL.orders();
             Model.orders modelOrder = bll.GetModel(orderno);
-            if(modelOrder.payment_id!=5 && modelOrder.payment_id!=6 && modelOrder.payment_id != 8)
+            if (modelOrder.payment_id != 5 && modelOrder.payment_id != 6 && modelOrder.payment_id != 8)
             {
                 context.Response.Write("{\"msg\":0, \"msgbox\":\"非微信支付方式无需查询支付状态\"}");
                 return;
             }
-            if(modelOrder.payment_status==2)
+            if (modelOrder.payment_status == 2)
             {
                 context.Response.Write("{\"msg\":0, \"msgbox\":\"订单已支付\"}");
                 return;
@@ -604,9 +613,9 @@ namespace DTcms.Web.tools
             string data = packageReqHandler.ParseXML();
             var mppay_result = TenPayV3.OrderQuery(data);
             var res = XDocument.Parse(mppay_result);
-            if(res.Element("xml").Element("return_code").Value=="FAIL")
+            if (res.Element("xml").Element("return_code").Value == "FAIL")
             {
-                context.Response.Write("{\"msg\":0, \"msgbox\":\""+ res.Element("xml").Element("return_msg").Value + "\"}");
+                context.Response.Write("{\"msg\":0, \"msgbox\":\"" + res.Element("xml").Element("return_msg").Value + "\"}");
                 return;
             }
             if (res.Element("xml").Element("result_code").Value == "FAIL")
@@ -615,7 +624,7 @@ namespace DTcms.Web.tools
                 return;
             }
             string _pay_title = string.Empty, _pay_status = "0";
-            switch(res.Element("xml").Element("trade_state").Value)
+            switch (res.Element("xml").Element("trade_state").Value)
             {
                 case "SUCCESS":
                     _pay_title = "支付成功";
@@ -641,7 +650,7 @@ namespace DTcms.Web.tools
                     break;
             }
             //处理确认收款的业务
-            if(modelOrder.payment_id==5 && string.Equals(_pay_status,"1"))
+            if (modelOrder.payment_id == 5 && string.Equals(_pay_status, "1"))
             {
                 bll.UpdateField(modelOrder.id, "payment_status=2,payment_time='" + DateTime.Now + "'");
 
@@ -901,7 +910,7 @@ namespace DTcms.Web.tools
                 }
                 #endregion
             }
-            else if(modelOrder.payment_id== 6 && string.Equals(_pay_status, "1"))
+            else if (modelOrder.payment_id == 6 && string.Equals(_pay_status, "1"))
             {
                 bll.UpdateField(modelOrder.id, "payment_status=2,payment_time='" + DateTime.Now + "'");
 
@@ -1151,7 +1160,7 @@ namespace DTcms.Web.tools
             //    }
             //    #endregion
             //}
-            context.Response.Write("{\"msg\":1,\"paystatus\":"+ _pay_status + ", \"msgbox\":\"" + _pay_title + "\"}");
+            context.Response.Write("{\"msg\":1,\"paystatus\":" + _pay_status + ", \"msgbox\":\"" + _pay_title + "\"}");
         }
 
         public bool IsReusable
@@ -1180,7 +1189,7 @@ namespace DTcms.Web.tools
             string orderno = DTRequest.GetFormString("orderno");
             BLL.orders bll = new BLL.orders();
             Model.orders modelOrder = bll.GetModel(orderno);
-            if (modelOrder.payment_status!=12 && modelOrder.payment_status!=11)
+            if (modelOrder.payment_status != 12 && modelOrder.payment_status != 11)
             {
                 context.Response.Write("{\"msg\":1, \"msgbox\":\"非同步订单状态无须确认\"}");
                 return;
@@ -1190,14 +1199,14 @@ namespace DTcms.Web.tools
                 context.Response.Write("{\"msg\":1, \"msgbox\":\"订单已确认\"}");
                 return;
             }
-            bll.UpdateField(modelOrder.id, "payment_status="+(modelOrder.payment_status-10));
+            bll.UpdateField(modelOrder.id, "payment_status=" + (modelOrder.payment_status - 10));
             context.Response.Write("{\"msg\":0, \"msgbox\":\"订单已确认\"}");
         }
 
         private void QueryUnConfirmSyncOrder(HttpContext context)
         {
             Model.siteconfig siteConfig = new BLL.siteconfig().loadConfig(Utils.GetXmlMapPath(DTKeys.FILE_SITE_XML_CONFING));
-            if(siteConfig.RunLoopThirdOrder==0)
+            if (siteConfig.RunLoopThirdOrder == 0)
             {
                 return;
             }
@@ -1207,7 +1216,7 @@ namespace DTcms.Web.tools
                 int count = bll.GetCount("(payment_status=12 or payment_status=11) and status !=5");
                 context.Response.Write("{\"msg\":0, \"count\":" + count + "}");
             }
-            
+
         }
     }
 }

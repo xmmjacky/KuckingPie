@@ -1,6 +1,8 @@
 ﻿using Aop.Api;
 using Aop.Api.Request;
 using Aop.Api.Response;
+using DTcms.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -231,7 +233,7 @@ namespace DTcms.API.Payment.Alipay_ScanCode
         {
             AlipayTradePrecreateRequest payRequst = new AlipayTradePrecreateRequest();
             payRequst.BizContent = biz_content;
-
+            Log.Info("支付宝请求参数：" + JsonConvert.SerializeObject(payRequst));
             AlipayTradePrecreateResponse payResponse = client.Execute(payRequst);
             return payResponse.Body;
         }
